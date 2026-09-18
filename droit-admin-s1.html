@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0c10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Droit Admin">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%237c8fff'/%3E%3Ctext x='50%25' y='55%25' font-size='100' text-anchor='middle' dominant-baseline='middle' fill='white'%3E%E2%9A%96%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<title>Droit Admin · L2 S3</title>
+<style>
+:root {
+  --bg: #0a0c10; --bg-1: #10131a; --bg-2: #171b24; --bg-3: #1f2430; --bg-4: #262c3a;
+  --border: #2a3140; --border-2: #3a4255;
+  --text: #eef1f7; --text-2: #a8b0c0; --text-3: #6b7488;
+  --accent: #7c8fff; --accent-2: #a78bfa; --accent-3: #22d3ee;
+  --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --gold: #fbbf24;
+  --tres-important: #ef4444; --important: #f59e0b; --normal: #10b981;
+  --radius: 14px; --radius-sm: 10px;
+  --shadow: 0 10px 40px rgba(0,0,0,0.5);
+  --transition: cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="light"] {
+  --bg: #f4f6fb; --bg-1: #ffffff; --bg-2: #ffffff; --bg-3: #eef1f8; --bg-4: #e3e8f4;
+  --border: #dce2ee; --border-2: #c8d0e0;
+  --text: #0f1420; --text-2: #4a5468; --text-3: #8b93a5;
+  --shadow: 0 10px 40px rgba(30,40,70,0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.55; font-size: 14px;
+  transition: background 0.3s, color 0.3s;
+  overflow-x: hidden; overscroll-behavior: none;
+  padding-top: env(safe-area-inset-top);
+}
+button, input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+
+/* HEADER */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+}
+.header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -0.3px; }
+.brand-icon { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: grid; place-items: center; font-size: 17px; box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 40%, transparent); }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-title { font-size: 14px; }
+.brand-sub { font-size: 10px; color: var(--text-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.header-stats { display: flex; gap: 8px; align-items: center; }
+.hs-item { display: flex; align-items: center; gap: 6px; background: var(--bg-2); border: 1px solid var(--border); padding: 6px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+.hs-item .icon { font-size: 14px; }
+.hs-item.streak .val { color: var(--warning); }
+.hs-item.xp .val { color: var(--accent); }
+.hs-item.level .val { color: var(--gold); }
+.icon-btn { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--border); display: grid; place-items: center; font-size: 15px; transition: all 0.15s; }
+.icon-btn:hover { background: var(--bg-3); }
+
+/* NAV */
+nav {
+  position: sticky; top: 57px; z-index: 99;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 16px; overflow-x: auto; scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+.nav-inner { max-width: 1280px; margin: 0 auto; display: flex; gap: 2px; }
+nav button { padding: 8px 14px; border-radius: 9px; font-size: 13px; font-weight: 600; color: var(--text-3); white-space: nowrap; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+nav button .nav-icon { font-size: 15px; }
+nav button:hover { color: var(--text-2); background: var(--bg-2); }
+nav button.active { color: var(--text); background: var(--bg-3); }
+nav button .badge-count { background: var(--danger); color: white; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 99px; margin-left: 4px; }
+
+/* MAIN */
+main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 100px; }
+section { display: none; animation: fadeUp 0.35s var(--transition); }
+section.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.page-head { margin-bottom: 20px; }
+.page-title { font-size: 26px; font-weight: 800; letter-spacing: -0.6px; margin-bottom: 4px; }
+.page-sub { color: var(--text-2); font-size: 13.5px; }
+
+/* CARDS */
+.card { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+.panel-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+/* DASHBOARD */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.stat-box { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; position: relative; overflow: hidden; }
+.stat-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+.stat-box.success::before { background: linear-gradient(90deg, var(--success), #16a34a); }
+.stat-box.warning::before { background: linear-gradient(90deg, var(--warning), #d97706); }
+.stat-box.gold::before { background: linear-gradient(90deg, var(--gold), #f59e0b); }
+.stat-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-3); }
+.stat-value { font-size: 30px; font-weight: 800; letter-spacing: -1.5px; margin: 4px 0; line-height: 1; }
+.stat-sub { font-size: 11.5px; color: var(--text-2); }
+.stat-bar { height: 5px; background: var(--bg-3); border-radius: 99px; overflow: hidden; margin-top: 10px; }
+.stat-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 99px; transition: width 0.6s var(--transition); }
+
+.dash-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+@media (max-width: 800px) { .dash-grid { grid-template-columns: 1fr; } }
+
+/* Heatmap */
+.heatmap-wrap { overflow-x: auto; padding: 4px 0; }
+.heatmap { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 12px); gap: 3px; min-width: 640px; }
+.hm-cell { width: 12px; height: 12px; border-radius: 3px; background: var(--bg-3); transition: transform 0.15s; cursor: pointer; }
+.hm-cell:hover { transform: scale(1.4); outline: 1px solid var(--accent); }
+.hm-cell.l1 { background: color-mix(in srgb, var(--accent) 25%, var(--bg-3)); }
+.hm-cell.l2 { background: color-mix(in srgb, var(--accent) 50%, var(--bg-3)); }
+.hm-cell.l3 { background: color-mix(in srgb, var(--accent) 75%, var(--bg-3)); }
+.hm-cell.l4 { background: var(--accent); }
+.hm-legend { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: var(--text-3); }
+
+/* Badges */
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.badge-item { background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; opacity: 0.4; filter: grayscale(1); transition: all 0.3s; }
+.badge-item.unlocked { opacity: 1; filter: none; border-color: color-mix(in srgb, var(--gold) 50%, var(--border)); background: color-mix(in srgb, var(--gold) 8%, var(--bg-2)); }
+.badge-icon { font-size: 26px; margin-bottom: 4px; }
+.badge-name { font-size: 11px; font-weight: 700; }
+.badge-desc { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+
+/* Quick actions */
+.quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.qa-btn { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 12px; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+.qa-btn:hover { background: var(--bg-3); border-color: var(--border-2); transform: translateY(-2px); }
+.qa-icon { font-size: 22px; }
+.qa-text { display: flex; flex-direction: column; }
+.qa-title { font-size: 13px; font-weight: 700; }
+.qa-sub { font-size: 11px; color: var(--text-3); }
+
+/* Fiches */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.search { flex: 1; min-width: 200px; background: var(--bg-1); border: 1px solid var(--border); padding: 10px 14px 10px 38px; border-radius: 11px; outline: none; transition: all 0.15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7488' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 12px center; }
+.search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+.chip { background: var(--bg-1); border: 1px solid var(--border); padding: 8px 14px; border-radius: 99px; font-size: 12.5px; font-weight: 600; color: var(--text-3); transition: all 0.15s; white-space: nowrap; }
+.chip:hover { color: var(--text-2); border-color: var(--border-2); }
+.chip.active { color: var(--text); background: var(--bg-3); border-color: var(--accent); }
+
+.fiches { display: grid; gap: 12px; }
+.fiche { background: var(--bg-1); border: 1px solid var(--border); border-left: 4px solid var(--border); border-radius: var(--radius); padding: 16px 18px; transition: all 0.2s; }
+.fiche:hover { border-color: var(--border-2); transform: translateY(-1px); box-shadow: var(--shadow); }
+.fiche.tres-important { border-left-color: var(--tres-important); }
+.fiche.important { border-left-color: var(--important); }
+.fiche.normal { border-left-color: var(--normal); }
+.fiche.mastered { opacity: 0.85; }
+.fiche-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.fiche-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+.fiche-title .mastered-check { color: var(--success); font-size: 14px; }
+.fiche-meta { color: var(--text-3); font-size: 12px; margin-top: 2px; }
+.fiche-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.tag.tres-important { background: color-mix(in srgb, var(--tres-important) 18%, transparent); color: var(--tres-important); }
+.tag.important { background: color-mix(in srgb, var(--important) 18%, transparent); color: var(--important); }
+.tag.normal { background: color-mix(in srgb, var(--normal) 18%, transparent); color: var(--normal); }
+.tag.theme { background: var(--bg-3); color: var(--text-2); text-transform: none; letter-spacing: 0; }
+.fiche-body { display: grid; gap: 10px; font-size: 13.5px; line-height: 1.6; }
+.fb-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-3); margin-bottom: 3px; }
+.citation { background: var(--bg-2); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 6px; font-style: italic; color: var(--text); font-size: 13px; }
+.fiche-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+.small-btn { background: var(--bg-2); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
+.small-btn:hover { background: var(--bg-3); border-color: var(--border-2); }
+.small-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+.small-btn.primary:hover { background: #6a7ee6; }
+.related { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.related-chip { background: var(--bg-3); border: 1px solid var(--border); padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; color: var(--text-2); cursor: pointer; transition: all 0.15s; }
+.related-chip:hover { background: var(--bg-4); color: var(--text); }
+
+/* SRS */
+.srs-wrap { max-width: 760px; margin: 0 auto; }
+.srs-progress { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: 12.5px; color: var(--text-2); }
+.srs-progress-bar { flex: 1; height: 6px; background: var(--bg-3); border-radius: 99px; overflow: hidden; }
+.srs-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.4s var(--transition); }
+.flip-card { perspective: 1600px; margin-bottom: 16px; }
+.flip-card-inner { position: relative; width: 100%; min-height: 400px; transform-style: preserve-3d; transition: transform 0.7s var(--transition); }
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.flip-face { position: absolute; inset: 0; background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 28px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; box-shadow: var(--shadow); }
+.flip-face.back { transform: rotateY(180deg); overflow-y: auto; justify-content: flex-start; }
+.flip-question { font-size: 24px; font-weight: 800; letter-spacing: -0.6px; text-align: center; line-height: 1.3; }
+.flip-juridiction { text-align: center; color: var(--text-3); font-size: 13px; margin-top: 8px; }
+.flip-hint { text-align: center; color: var(--text-3); font-size: 12px; margin-top: 20px; }
+.flip-face.back p { font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+.rate-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.rate-btn { padding: 12px 8px; border-radius: 11px; font-weight: 700; font-size: 12.5px; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px solid transparent; }
+.rate-btn small { font-size: 10px; font-weight: 600; opacity: 0.75; }
+.rate-btn:hover { transform: translateY(-2px); }
+.rate-again { background: color-mix(in srgb, var(--danger) 12%, var(--bg-2)); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 30%, transparent); }
+.rate-hard { background: color-mix(in srgb, var(--warning) 12%, var(--bg-2)); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 30%, transparent); }
+.rate-good { background: color-mix(in srgb, var(--accent) 15%, var(--bg-2)); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+.rate-easy { background: color-mix(in srgb, var(--success) 12%, var(--bg-2)); color: var(--success); border-color: color-mix(in srgb, var(--success) 30%, transparent); }
+
+/* Quiz */
+.quiz-q { margin-bottom: 16px; }
+.quiz-prompt { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 16px; }
+.quiz-prompt em { color: var(--accent-3); font-style: normal; }
+.quiz-options { display: grid; gap: 8px; }
+.quiz-opt { background: var(--bg-2); border: 2px solid transparent; padding: 13px 16px; border-radius: 11px; text-align: left; font-size: 13.5px; line-height: 1.5; transition: all 0.15s; }
+.quiz-opt:hover:not(:disabled) { background: var(--bg-3); transform: translateX(2px); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-opt.correct { background: color-mix(in srgb, var(--success) 15%, var(--bg-2)); border-color: var(--success); }
+.quiz-opt.wrong { background: color-mix(in srgb, var(--danger) 12%, var(--bg-2)); border-color: var(--danger); }
+
+/* Exam */
+.exam-config { max-width: 600px; margin: 0 auto; }
+.exam-option-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.exam-option-row:last-child { border-bottom: none; }
+.exam-option-label { font-size: 14px; font-weight: 600; }
+.exam-option-desc { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.num-input { background: var(--bg-3); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; width: 80px; text-align: center; font-weight: 700; }
+.exam-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 18px; margin-bottom: 16px; position: sticky; top: 110px; z-index: 10; }
+.timer { font-family: ui-monospace, "SF Mono", monospace; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.timer.warning { color: var(--warning); }
+.timer.danger { color: var(--danger); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.exam-question { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+.exam-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-3); margin-bottom: 6px; }
+.exam-input { width: 100%; background: var(--bg-3); border: 1px solid var(--border); padding: 10px 12px; border-radius: 9px; font-size: 13px; outline: none; resize: vertical; min-height: 60px; font-family: inherit; line-height: 1.5; transition: border 0.15s; }
+.exam-input:focus { border-color: var(--accent); }
+.exam-report-card { text-align: center; padding: 40px 20px; }
+.exam-score { font-size: 64px; font-weight: 800; letter-spacing: -3px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* Stats */
+.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 800px) { .charts-grid { grid-template-columns: 1fr; } }
+.chart-canvas { width: 100%; height: 220px; display: block; }
+.donut-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; font-size: 12px; }
+.dl-item { display: flex; justify-content: space-between; align-items: center; }
+.dl-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 8px; }
+
+/* Settings */
+.settings-list { display: grid; gap: 2px; }
+.setting-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--border); }
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 14px; font-weight: 600; }
+.setting-desc { font-size: 12px; color: var(--text-3); margin-top: 2px; max-width: 480px; }
+.toggle { width: 46px; height: 26px; border-radius: 99px; background: var(--bg-3); border: 1px solid var(--border); position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: transform 0.2s var(--transition); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle.on::after { transform: translateX(20px); }
+
+/* Toast */
+.toast-wrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; padding-bottom: env(safe-area-inset-bottom); }
+.toast { background: var(--bg-2); border: 1px solid var(--border-2); padding: 12px 20px; border-radius: 99px; font-size: 13px; font-weight: 700; box-shadow: var(--shadow); animation: toastIn 0.3s var(--transition); display: flex; align-items: center; gap: 8px; pointer-events: auto; max-width: 90vw; }
+@keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.toast.success { border-color: color-mix(in srgb, var(--success) 50%, var(--border)); color: var(--success); }
+.toast.xp { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); color: var(--accent); }
+.toast.badge { border-color: color-mix(in srgb, var(--gold) 50%, var(--border)); color: var(--gold); }
+
+/* Empty */
+.empty { text-align: center; padding: 60px 20px; color: var(--text-3); }
+.empty-icon { font-size: 56px; margin-bottom: 12px; opacity: 0.4; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .brand-text { display: none; }
+  .hs-item { padding: 5px 8px; font-size: 11px; }
+  .page-title { font-size: 22px; }
+  .flip-question { font-size: 19px; }
+  .flip-face { padding: 22px 18px; }
+  .flip-card-inner { min-height: 340px; }
+  main { padding: 16px 12px 80px; }
+  .stat-value { font-size: 26px; }
+  nav { top: 53px; }
+  .exam-header { top: 100px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">⚖️</div>
+      <div class="brand-text">
+        <span class="brand-title">Droit Admin</span>
+        <span class="brand-sub">L2 S3 · Complet</span>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="hs-item streak" title="Jours consécutifs"><span class="icon">🔥</span><span class="val" id="hStreak">0</span></div>
+      <div class="hs-item level" title="Niveau"><span class="icon">🏆</span><span class="val" id="hLevel">1</span></div>
+      <div class="hs-item xp" title="XP"><span class="icon">⚡</span><span class="val" id="hXp">0</span></div>
+      <button class="icon-btn" id="themeBtn" title="Thème">🌙</button>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner" id="nav">
+    <button data-tab="dashboard" class="active"><span class="nav-icon">📊</span>Dashboard</button>
+    <button data-tab="fiches"><span class="nav-icon">📚</span>Arrêts</button>
+    <button data-tab="cours"><span class="nav-icon">📖</span>Cours</button>
+    <button data-tab="srs"><span class="nav-icon">🎯</span>SRS <span class="badge-count" id="navDue" style="display:none"></span></button>
+    <button data-tab="exam"><span class="nav-icon">⏱️</span>Examen</button>
+    <button data-tab="audio"><span class="nav-icon">🎧</span>Audio</button>
+    <button data-tab="quiz"><span class="nav-icon">❓</span>Quiz</button>
+    <button data-tab="stats"><span class="nav-icon">📈</span>Stats</button>
+    <button data-tab="settings"><span class="nav-icon">⚙️</span></button>
+  </div>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="active">
+  <div class="page-head">
+    <h1 class="page-title">Tableau de bord</h1>
+    <p class="page-sub">37 arrêts + 62 notions · répétition espacée · gamification</p>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box success">
+      <div class="stat-label">Maîtrisés</div>
+      <div class="stat-value" id="dMastered">0</div>
+      <div class="stat-sub">sur <span id="dTotal">37</span> arrêts</div>
+      <div class="stat-bar"><div class="stat-bar-fill" id="dMasteredBar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-box"><div class="stat-label">En cours</div><div class="stat-value" id="dLearning">0</div><div class="stat-sub">niveau ≥ 2</div></div>
+    <div class="stat-box warning"><div class="stat-label">À réviser</div><div class="stat-value" id="dDue">0</div><div class="stat-sub">maintenant</div></div>
+    <div class="stat-box gold"><div class="stat-label">Niveau</div><div class="stat-value" id="dLevel">1</div><div class="stat-sub"><span id="dXp">0</span> XP</div></div>
+  </div>
+  <div class="quick-actions" style="margin-bottom:16px">
+    <button class="qa-btn" onclick="startSrsSession()"><div class="qa-icon">🎯</div><div class="qa-text"><span class="qa-title">Session SRS</span><span class="qa-sub" id="qaDue">0 carte due</span></div></button>
+    <button class="qa-btn" onclick="go('exam')"><div class="qa-icon">⏱️</div><div class="qa-text"><span class="qa-title">Examen blanc</span><span class="qa-sub">chronométré</span></div></button>
+    <button class="qa-btn" onclick="go('audio')"><div class="qa-icon">🎧</div><div class="qa-text"><span class="qa-title">Mode audio</span><span class="qa-sub">mains-libres</span></div></button>
+    <button class="qa-btn" onclick="go('quiz')"><div class="qa-icon">❓</div><div class="qa-text"><span class="qa-title">Quiz rapide</span><span class="qa-sub">5 questions</span></div></button>
+  </div>
+  <div class="dash-grid">
+    <div class="card">
+      <div class="panel-title">📅 Activité (12 dernières semaines)</div>
+      <div class="heatmap-wrap"><div class="heatmap" id="heatmap"></div></div>
+      <div class="hm-legend"><span>Moins</span><div class="hm-cell"></div><div class="hm-cell l1"></div><div class="hm-cell l2"></div><div class="hm-cell l3"></div><div class="hm-cell l4"></div><span>Plus</span></div>
+    </div>
+    <div class="card">
+      <div class="panel-title">🏅 Badges</div>
+      <div class="badges" id="badges"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="panel-title">📊 Progression par thème</div>
+    <div id="themeProgress"></div>
+  </div>
+</section>
+
+<!-- FICHES -->
+<section id="fiches">
+  <div class="page-head"><h1 class="page-title">Fiches d'arrêt</h1><p class="page-sub">37 arrêts · clique pour réviser</p></div>
+  <div class="toolbar"><input type="text" class="search" id="searchInput" placeholder="Rechercher un arrêt, thème, citation..."></div>
+  <div class="toolbar" id="filterChips">
+    <button class="chip active" data-filter="all">Tous</button>
+    <button class="chip" data-filter="tres-important">Très important</button>
+    <button class="chip" data-filter="important">Important</button>
+    <button class="chip" data-filter="normal">Normal</button>
+    <button class="chip" data-filter="mastered">Maîtrisés</button>
+    <button class="chip" data-filter="learning">En cours</button>
+    <button class="chip" data-filter="new">Nouveaux</button>
+  </div>
+  <div class="fiches" id="fichesGrid"></div>
+</section>
+
+<!-- COURS -->
+<section id="cours">
+  <div class="page-head"><h1 class="page-title">Notions du cours</h1><p class="page-sub">62 définitions, principes, théories, institutions et textes</p></div>
+  <div class="toolbar"><input type="text" class="search" id="coursSearch" placeholder="Rechercher une notion, un auteur, un article..."></div>
+  <div class="toolbar" id="coursChips">
+    <button class="chip active" data-cat="all">Tout</button>
+    <button class="chip" data-cat="definition">Définitions</button>
+    <button class="chip" data-cat="principe">Principes</button>
+    <button class="chip" data-cat="theorie">Théories</button>
+    <button class="chip" data-cat="institution">Institutions</button>
+    <button class="chip" data-cat="texte">Textes</button>
+  </div>
+  <div class="fiches" id="coursGrid"></div>
+</section>
+
+<!-- SRS -->
+<section id="srs">
+  <div class="page-head" style="text-align:center"><h1 class="page-title">Session SRS</h1><p class="page-sub">Répétition espacée · algorithme SM-2</p></div>
+  <div class="srs-wrap" id="srsArea"></div>
+</section>
+
+<!-- EXAM -->
+<section id="exam"><div id="examArea"></div></section>
+
+<!-- AUDIO -->
+<section id="audio">
+  <div class="page-head"><h1 class="page-title">Mode audio</h1><p class="page-sub">Révision mains-libres</p></div>
+  <div id="audioArea"></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="page-head"><h1 class="page-title">Quiz</h1><p class="page-sub">Teste ta mémoire active</p></div>
+  <div style="max-width:760px;margin:0 auto" id="quizArea"></div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="page-head"><h1 class="page-title">Statistiques</h1><p class="page-sub">Ta progression détaillée</p></div>
+  <div class="charts-grid">
+    <div class="card"><div class="panel-title">📈 Révisions (30 derniers jours)</div><canvas class="chart-canvas" id="chartRevisions"></canvas></div>
+    <div class="card"><div class="panel-title">🥧 Répartition des niveaux</div><canvas class="chart-canvas" id="chartLevels"></canvas><div class="donut-legend" id="levelLegend"></div></div>
+    <div class="card"><div class="panel-title">🎯 Précision des réponses</div><canvas class="chart-canvas" id="chartAccuracy"></canvas></div>
+    <div class="card"><div class="panel-title">⏱️ Temps d'étude (30j)</div><canvas class="chart-canvas" id="chartTime"></canvas></div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings">
+  <div class="page-head"><h1 class="page-title">Réglages</h1><p class="page-sub">Personnalise ton expérience</p></div>
+  <div class="card">
+    <div class="settings-list">
+      <div class="setting-row"><div><div class="setting-label">Thème sombre</div><div class="setting-desc">Basculer entre clair et sombre</div></div><div class="toggle" id="tTheme"></div></div>
+      <div class="setting-row"><div><div class="setting-label">Inclure les arrêts "Normal"</div><div class="setting-desc">Réviser aussi les arrêts de moindre importance</div></div><div class="toggle" id="tNormal"></div></div>
+      <div class="setting-row"><div><div class="setting-label">Objectif quotidien</div><div class="setting-desc">Nombre de révisions par jour</div></div><input type="number" class="num-input" id="tGoal" min="5" max="200" value="30"></div>
+      <div class="setting-row"><div><div class="setting-label">Reset progression</div><div class="setting-desc">Efface XP, niveaux, SRS, badges</div></div><button class="small-btn" onclick="resetAll()" style="color:var(--danger)">Réinitialiser</button></div>
+      <div class="setting-row"><div><div class="setting-label">Export / Import</div><div class="setting-desc">Sauvegarde ta progression (JSON)</div></div><div style="display:flex;gap:6px"><button class="small-btn" onclick="exportData()">Exporter</button><button class="small-btn" onclick="document.getElementById('importFile').click()">Importer</button><input type="file" id="importFile" accept=".json" hidden></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ============================================================
+   ARRETS (37)
+   ============================================================ */
+const ARRETS = [
+  {id:1,nom:"Cadot",jur:"Conseil d'État",date:"1889",an:1889,imp:"tres-important",theme:"Compétence du juge administratif",
+   prob:"Le requérant doit-il obligatoirement saisir le ministre avant de pouvoir saisir le Conseil d'État ?",
+   sol:"Le Conseil d'État donne tort aux ministres. Il considère qu'il est possible de le saisir directement, sans saisir préalablement les ministres.",
+   port:"Le Conseil d'État devient juge de droit commun de l'administration. Fin de la théorie du ministre-juge. Création d'un ordre juridictionnel administratif distinct de l'ordre judiciaire.",
+   cit:"Le Conseil d'État statue souverainement sur les recours en matière contentieuse administrative.",
+   mots:["ministre-juge","juge de droit commun","recours direct"],
+   lies:[2,3],diff:3},
+  {id:2,nom:"Conseil de la concurrence",jur:"Conseil constitutionnel",date:"23 janvier 1987",an:1987,imp:"tres-important",theme:"Constitutionnalisation du juge administratif",
+   prob:"Est-il constitutionnellement possible de confier au juge judiciaire le contentieux des décisions d'une autorité administrative ?",
+   sol:"Le Conseil constitutionnel admet que c'est possible, mais il en profite pour constitutionnaliser l'existence du juge administratif. Il pose le principe selon lequel les décisions prises par les autorités administratives dans l'exercice du pouvoir exécutif relèvent du juge administratif.",
+   port:"Considérant n°15 : réserve constitutionnelle de compétence au profit du juge administratif. La loi des 16 et 24 août 1790 n'a pas valeur constitutionnelle, mais le principe de compétence du juge administratif pour les décisions administratives a valeur constitutionnelle. Une loi ne peut pas supprimer le juge administratif.",
+   cit:"La loi des 16 et 24 août 1790 n'a pas valeur constitutionnelle.",
+   mots:["réserve de compétence","considérant 15","bloc de constitutionnalité"],
+   lies:[1,3,30,31],diff:4},
+  {id:3,nom:"Blanco",jur:"Tribunal des conflits",date:"8 février 1873",an:1873,imp:"tres-important",theme:"Autonomie du droit administratif",
+   prob:"Le juge judiciaire est-il compétent pour connaître d'une action en responsabilité dirigée contre une collectivité publique ?",
+   sol:"Le Tribunal des conflits considère que le juge judiciaire n'est pas compétent. Il énonce que toute action en responsabilité dirigée contre une collectivité publique doit par principe général être portée devant la juridiction administrative. Les règles applicables ne peuvent être celles du Code civil.",
+   port:"Arrêt fondateur du droit administratif. Autonomie du droit administratif par rapport au droit civil. Compétence du juge administratif pour les litiges impliquant l'administration. Création d'un régime de responsabilité spécifique.",
+   cit:"Toute action en responsabilité dirigée contre une collectivité publique doit par principe général être portée devant la juridiction administrative.",
+   mots:["autonomie","responsabilité administrative","juge judiciaire incompétent"],
+   lies:[1,2,7],diff:3},
+  {id:4,nom:"CE, 15 avril 2024",jur:"Conseil d'État, Assemblée",date:"15 avril 2024",an:2024,imp:"tres-important",theme:"Impartialité du juge administratif",
+   prob:"Le cumul des fonctions consultatives et juridictionnelles du Conseil d'État est-il compatible avec le principe d'impartialité ?",
+   sol:"Le Conseil d'État réaffirme que la première caractéristique d'un membre de la justice administrative doit être l'impartialité. Il précise les conditions dans lesquelles cette impartialité est garantie.",
+   port:"Arrêt récent qui confirme et précise la jurisprudence en matière d'impartialité du juge administratif. Fait suite aux critiques de la CEDH (arrêt Procola, Kress).",
+   cit:"La première caractéristique d'un membre de la justice administrative doit être l'impartialité.",
+   mots:["impartialité","cumul consultatif/juridictionnel","CEDH"],
+   lies:[5,6,29],diff:3},
+  {id:5,nom:"Procola",jur:"CEDH",date:"28 septembre 1995",an:1995,imp:"tres-important",theme:"Impartialité – théorie des apparences",
+   prob:"Le cumul des fonctions consultatives et juridictionnelles est-il compatible avec l'article 6§1 de la CEDH (droit à un procès équitable) ?",
+   sol:"La CEDH donne raison à M. Procola. Elle considère que l'organe du Conseil d'État du Luxembourg est incompatible avec la Convention européenne des droits de l'homme, sur le fondement de la théorie des apparences.",
+   port:"Théorie des apparences : la justice ne doit pas seulement être rendue, elle doit donner le sentiment qu'elle a bien été rendue. Le Conseil d'État français a pris ses distances avec cet arrêt en disant qu'il ne valait que pour le Luxembourg.",
+   cit:"La justice ne doit pas seulement être rendue, elle doit donner le sentiment qu'elle a bien été rendue.",
+   mots:["théorie des apparences","article 6§1","Luxembourg"],
+   lies:[4,6,29],diff:3},
+  {id:6,nom:"Kress c. France",jur:"CEDH",date:"2001",an:2001,imp:"tres-important",theme:"Impartialité – commissaire du gouvernement",
+   prob:"La participation du commissaire du gouvernement au délibéré est-elle compatible avec l'article 6§1 de la CEDH ?",
+   sol:"La CEDH considère que le commissaire du gouvernement pose problème au regard de la théorie des apparences. L'article 6§1 de la Convention européenne des droits de l'homme a été violé du fait de la participation du commissaire du gouvernement pour délibérer.",
+   port:"La France a dû prendre des mesures : décret du 7 janvier 2009. Changement de nom : le commissaire du gouvernement devient le rapporteur public. Le rapporteur public ne participe plus au délibéré. Avant l'audience, il communique le sens de ses conclusions.",
+   cit:"L'article 6§1 de la Convention européenne des droits de l'homme a été violé du fait de la participation du commissaire du gouvernement pour délibérer.",
+   mots:["commissaire du gouvernement","rapporteur public","décret 2009"],
+   lies:[4,5],diff:3},
+  {id:7,nom:"Téry",jur:"Conseil d'État",date:"20 juin 1913",an:1913,imp:"important",theme:"Responsabilité administrative",
+   prob:"L'État est-il responsable du fait de ses agents ?",
+   sol:"Le Conseil d'État consacre la responsabilité de l'État du fait de ses agents. Il distingue la faute personnelle de l'agent de la faute de service.",
+   port:"Arrêt de principe sur la responsabilité administrative. Distinction entre faute personnelle et faute de service. Permet de déterminer la juridiction compétente.",
+   cit:"L'État est responsable du fait de ses agents.",
+   mots:["faute personnelle","faute de service","responsabilité"],
+   lies:[3],diff:3},
+  {id:8,nom:"Sicard",jur:"Conseil d'État",date:"27 avril 1962",an:1962,imp:"important",theme:"Compétences PDR / PM",
+   prob:"Un décret signé par le Président de la République alors qu'il n'est pas délibéré en Conseil des ministres est-il valide ?",
+   sol:"Le Conseil d'État développe une interprétation neutralisante : le décret a été signé par le PDR alors qu'il aurait dû être pris par le PM et par lui seul, mais ce n'est pas grave. La signature du PDR est superfétatoire, on fait comme si elle n'existait pas, car le décret a été aussi signé par le PM.",
+   port:"Si on veut modifier le décret en cause, qui devra le signer pour le modifier ? Le PM. Application du principe de parallélisme des formes et des compétences.",
+   cit:"La signature du Président de la République est superfétatoire.",
+   mots:["signature superfétatoire","parallélisme des formes","PM"],
+   lies:[9,10,11,12],diff:4},
+  {id:9,nom:"Meyet",jur:"Conseil d'État, Assemblée",date:"10 septembre 1992",an:1992,imp:"important",theme:"Compétences PDR / PM",
+   prob:"Qui est l'auteur d'un décret délibéré en Conseil des ministres alors qu'aucun texte ne l'impose ?",
+   sol:"Le Conseil d'État considère qu'ils devaient être signés par le PDR. Si le PDR signe un décret en Conseil des ministres, il est l'auteur du décret.",
+   port:"Confirme et étend la jurisprudence Sicard. Le PDR peut capter les champs de compétences du PM. Cela a élargi énormément le champ de compétences réglementaires du PDR.",
+   cit:"Si le Président de la République signe un décret en Conseil des ministres, il est l'auteur du décret.",
+   mots:["PDR auteur","Conseil des ministres","Sicard"],
+   lies:[8,10,12],diff:4},
+  {id:10,nom:"Allamigeon",jur:"Conseil d'État",date:"27 avril 1994",an:1994,imp:"normal",theme:"Compétences PDR / PM",
+   prob:"Le Premier ministre peut-il modifier un décret délibéré en Conseil des ministres ?",
+   sol:"Le décret a été entaché d'incompétence. Le PM a commis un vice d'incompétence : une autorité a pris un acte qu'elle n'avait pas le pouvoir juridique de prendre.",
+   port:"Application du principe de parallélisme des formes et des compétences. Confirme que le PDR est l'auteur du décret délibéré en Conseil des ministres et que seul le PDR peut le modifier.",
+   cit:"Vice d'incompétence : autorité auteur d'un acte qu'elle n'avait pas le pouvoir juridique pour prendre.",
+   mots:["vice d'incompétence","parallélisme","PM incompétent"],
+   lies:[8,9,12],diff:3},
+  {id:11,nom:"Malezieux",jur:"Conseil d'État",date:"26 juin 1953",an:1953,imp:"normal",theme:"Compétences PDR / PM",
+   prob:"Qui est compétent pour nommer lorsqu'un texte prévoit une nomination par décret sans préciser la nature du décret ?",
+   sol:"Le Conseil d'État pose la règle : dès lors qu'un texte législatif ou réglementaire prévoit qu'une nomination sera faite par décret sans préciser la nature du décret, il faut en déduire que la compétence est attribuée au PDR.",
+   port:"Le juge veille au respect des prérogatives présidentielles et annule les nominations faites par des personnes incompétentes. La pratique de la Ve République a étendu la compétence de principe du PDR.",
+   cit:"La compétence est attribuée au Président de la République.",
+   mots:["nomination","décret simple","PDR compétent"],
+   lies:[8,12],diff:3},
+  {id:12,nom:"Reverdy",jur:"Conseil d'État",date:"7 octobre 1992",an:1992,imp:"important",theme:"Compétences PDR / PM",
+   prob:"Le Premier ministre peut-il révoquer le président de la RATP nommé par le Président de la République ?",
+   sol:"Reverdy savait que seul le PDR pouvait le révoquer. Il a attaqué le décret du PM sur le fondement du principe du parallélisme des formes et des compétences. Le CE annule le décret du PM.",
+   port:"Application du principe de parallélisme des formes et des compétences en matière de révocation. L'autorité de nomination est aussi l'autorité de révocation.",
+   cit:"L'autorité de nomination est aussi l'autorité de révocation.",
+   mots:["révocation","parallélisme","RATP"],
+   lies:[8,9,10,11],diff:3},
+  {id:13,nom:"France terre d'asile",jur:"Conseil d'État",date:"27 septembre 1985",an:1985,imp:"normal",theme:"Bloc de constitutionnalité",
+   prob:"L'alinéa 4 du préambule de la Constitution de 1946 est-il directement invocable devant le juge administratif ?",
+   sol:"Le Conseil d'État considère que les dispositions en cause sont énoncées de manière trop générale pour qu'on puisse s'en prévaloir tant qu'une loi n'est pas venue les préciser. Cet alinéa 4 n'est donc pas d'applicabilité directe.",
+   port:"Distinction entre les dispositions suffisamment précises et pleinement invocables, et celles en termes vagues et généraux qui nécessitent une loi d'application.",
+   cit:"Les dispositions en cause sont énoncées de manière trop générale pour qu'on puisse s'en prévaloir.",
+   mots:["préambule 1946","invocabilité","applicabilité directe"],
+   lies:[14,16],diff:3},
+  {id:14,nom:"Eky",jur:"Conseil d'État",date:"12 février 1960",an:1960,imp:"important",theme:"Bloc de constitutionnalité",
+   prob:"Est-il conforme à la Constitution de créer par décret une nouvelle contravention assortie d'une peine de prison ?",
+   sol:"Le Conseil d'État rejette le recours. Il reconnaît l'existence de l'article 8 DDHC mais dit qu'on ne peut pas le lire tout seul. Il existe un autre texte à valeur constitutionnelle qui ne dit pas la même chose : l'article 34. Le CE dit que la règle spéciale l'emporte sur la règle générale.",
+   port:"Le CE fait produire des effets au préambule de la Constitution de 1958. Mais il donne une lecture restrictive de l'article 8 DDHC. Le CC prendra une position plus restrictive en 1973.",
+   cit:"La règle spéciale l'emporte sur la règle générale.",
+   mots:["contravention","article 8 DDHC","règle spéciale"],
+   lies:[13,15],diff:4},
+  {id:15,nom:"CC, 28 novembre 1973",jur:"Conseil constitutionnel",date:"28 novembre 1973",an:1973,imp:"important",theme:"Bloc de constitutionnalité",
+   prob:"Le pouvoir réglementaire peut-il créer des contraventions assorties de peines privatives de liberté ?",
+   sol:"Le Conseil constitutionnel considère que la détermination des contraventions et des peines est du domaine réglementaire lorsque l'édit ne comporte pas de mesures privatives de liberté. Le gouvernement peut créer des contraventions, mais pas de peine privative de liberté.",
+   port:"Lecture plus restrictive que le CE. Le CC invoque l'article 66 : « Nul ne peut être arbitrairement détenu, l'autorité judiciaire gardienne de la liberté individuelle assure le respect de ce principe. »",
+   cit:"La détermination des contraventions et des peines qui leur sont applicables est du domaine réglementaire lorsque l'édit ne comporte pas de mesures privatives de liberté.",
+   mots:["contravention","peine privative de liberté","article 66"],
+   lies:[14],diff:4},
+  {id:16,nom:"Commune d'Annecy",jur:"Conseil d'État, Assemblée",date:"3 octobre 2008",an:2008,imp:"important",theme:"Bloc de constitutionnalité – Charte de l'environnement",
+   prob:"La Charte de l'environnement, intégrée au bloc de constitutionnalité, est-elle invocable devant le juge administratif ?",
+   sol:"Le Conseil d'État fait application de la Charte de l'environnement. Il reconnaît la possibilité, à l'encontre d'un décret, d'invoquer cette charte qui a valeur constitutionnelle. Il invoque l'article 7.",
+   port:"Le CE fait produire des effets à tous les textes qui composent le préambule. Toutefois, toutes les dispositions de la Charte ne sont pas invocables : certaines sont trop vagues.",
+   cit:"La Charte de l'environnement a valeur constitutionnelle et est invocable devant le juge administratif.",
+   mots:["Charte de l'environnement","article 7","bloc de constitutionnalité"],
+   lies:[13,14,28],diff:3},
+  {id:17,nom:"Amicales des anamites de Paris",jur:"Conseil d'État, Assemblée",date:"11 juillet 1946",an:1946,imp:"important",theme:"PFRLR",
+   prob:"Le ministre peut-il dissoudre une association ?",
+   sol:"Le Conseil d'État invoque un principe fondamental reconnu par les lois de la République : la liberté d'association. Il annule l'arrêté du ministre de l'intérieur.",
+   port:"Premier arrêt dégageant un PFRLR. Avant 1958, c'est le CE qui dégage et applique les PFRLR et annule les actes qui ne les respectent pas.",
+   cit:"Principe fondamental reconnu par les lois de la République : la liberté d'association.",
+   mots:["PFRLR","liberté d'association","dissolution"],
+   lies:[18,19,20,34],diff:4},
+  {id:18,nom:"CE, 16 juillet 1956, liberté d'association",jur:"Conseil d'État",date:"16 juillet 1956",an:1956,imp:"important",theme:"PFRLR",
+   prob:"Les PFRLR sont-ils applicables aux ressortissants de l'Union française ?",
+   sol:"Le Conseil d'État considère que les PFRLR et réaffirmés par le préambule de la Constitution de 1946 sont applicables sur le territoire français aux ressortissants de l'Union française. Au nombre de ces principes figure la liberté d'association.",
+   port:"Le CE dégage le principe de la liberté d'association comme PFRLR. Application aux ressortissants de l'Union française. Confirme la jurisprudence Amicales des anamites.",
+   cit:"Les principes fondamentaux reconnus par les lois de la République sont applicables sur le territoire français aux ressortissants de l'Union française.",
+   mots:["PFRLR","Union française","liberté d'association"],
+   lies:[17,19,20],diff:3},
+  {id:19,nom:"Avis CE, 9 novembre 1995",jur:"Conseil d'État, Avis",date:"9 novembre 1995",an:1995,imp:"normal",theme:"PFRLR",
+   prob:"L'interdiction d'extrader pour des infractions à caractère politique est-elle un principe à valeur constitutionnelle ?",
+   sol:"Le Conseil d'État, dans cet avis, identifie un principe fondamental reconnu par les lois de la République, qui interdit à l'État de procéder à l'extradition pour des infractions qu'il considère comme des infractions à caractère politique.",
+   port:"Le CE, en tant que conseiller du gouvernement, continue après 1958 à dégager des PFRLR. Cet avis sera repris dans l'arrêt Koné.",
+   cit:"Principe fondamental reconnu par les lois de la République : interdiction d'extrader pour des infractions à caractère politique.",
+   mots:["PFRLR","extradition politique","avis"],
+   lies:[17,18,20],diff:3},
+  {id:20,nom:"Koné",jur:"Conseil d'État, Assemblée",date:"3 juillet 1996",an:1996,imp:"important",theme:"PFRLR",
+   prob:"Où se situe, dans la hiérarchie des normes, le principe selon lequel un État n'extrade pas pour un motif politique ?",
+   sol:"Le Conseil d'État affirme que le principe selon lequel l'extradition est refusée pour un motif politique est un principe à valeur constitutionnelle. Le CE peut examiner si le décret d'extradition respecte ce principe.",
+   port:"Le CE dégage un PFRLR au contentieux, alors que normalement c'est le CC qui doit dégager les PFRLR. Risque de divergence entre le CC et le CE.",
+   cit:"Le principe selon lequel l'extradition est refusée pour un motif politique est un principe à valeur constitutionnelle.",
+   mots:["PFRLR","extradition politique","neutralisation convention"],
+   lies:[17,18,19],diff:4},
+  {id:21,nom:"Arrighi",jur:"Conseil d'État",date:"6 novembre 1936",an:1936,imp:"important",theme:"Loi-écran",
+   prob:"Le Conseil d'État est-il compétent pour opérer un contrôle de constitutionnalité des lois ?",
+   sol:"Le Conseil d'État dit qu'il n'est pas compétent, en l'état du droit public français, pour opérer un contrôle de constitutionnalité des lois. Il estime que la loi est une norme suprême.",
+   port:"Arrêt fondateur de la théorie de la loi-écran. Légicentrisme. Le CE réaffirme cette position en 2005 (arrêt Deprez).",
+   cit:"Le Conseil d'État n'est pas compétent pour opérer un contrôle de constitutionnalité des lois.",
+   mots:["loi-écran","légicentrisme","contrôle de constitutionnalité"],
+   lies:[22,23,24,25],diff:4},
+  {id:22,nom:"Deprez",jur:"Conseil d'État",date:"5 janvier 2005",an:2005,imp:"important",theme:"Loi-écran",
+   prob:"Le Conseil d'État est-il compétent pour opérer un contrôle de constitutionnalité des lois sous la Ve République ?",
+   sol:"Le Conseil d'État réaffirme qu'il n'est pas compétent. Il se fonde sur l'article 61 : la Constitution a créé un organe pour ça, le Conseil constitutionnel, donc c'est à lui d'opérer ce contrôle.",
+   port:"Réaffirmation de la jurisprudence Arrighi sous la Ve République. Le CE n'est pas compétent pour le contrôle de constitutionnalité des lois.",
+   cit:"La Constitution a créé un organe pour ça, le Conseil constitutionnel, donc c'est à lui d'opérer ce contrôle.",
+   mots:["article 61","loi-écran","Conseil constitutionnel"],
+   lies:[21,23],diff:3},
+  {id:23,nom:"Eaux et rivières de Bretagne",jur:"Conseil d'État",date:"19 juin 2006",an:2006,imp:"normal",theme:"Loi-écran",
+   prob:"Le juge administratif peut-il contrôler la constitutionnalité d'un décret pris sur le fondement d'une loi ?",
+   sol:"Le Conseil d'État s'est déclaré incompétent car il y a une loi. Ça serait un contrôle de constitutionnalité indirect de la loi. Application de la théorie de la loi-écran.",
+   port:"Confirme la théorie de la loi-écran. Le juge administratif ne peut pas contrôler la constitutionnalité d'un acte réglementaire pris sur le fondement d'une loi.",
+   cit:"Application de la théorie de la loi-écran.",
+   mots:["loi-écran","décret","contrôle indirect"],
+   lies:[21,22,24,25],diff:3},
+  {id:24,nom:"Quintin",jur:"Conseil d'État",date:"17 mai 1991",an:1991,imp:"important",theme:"Loi-écran transparent",
+   prob:"Le juge administratif peut-il contrôler la constitutionnalité d'un règlement pris sur le fondement d'une loi qui ne précise pas clairement les conditions et limites du pouvoir réglementaire ?",
+   sol:"Le Conseil d'État accepte de vérifier que le règlement respecte le droit de propriété même si entre les deux il y a la loi. La loi n'est qu'une habilitation qui ne précise pas clairement les conditions et limites. Dans ce cas, il y a un « écran législatif transparent ».",
+   port:"Arrêt de principe sur l'écran législatif transparent. Le CE peut contrôler la constitutionnalité d'un règlement quand la loi ne fait que l'habiliter.",
+   cit:"Écran législatif transparent qui ne l'empêche pas d'examiner la constitutionnalité du règlement en cause.",
+   mots:["écran transparent","habilitation","droit de propriété"],
+   lies:[21,23,25],diff:4},
+  {id:25,nom:"Fédération nationale de la pêche en France",jur:"Conseil d'État, Assemblée",date:"18 juillet 2013",an:2013,imp:"important",theme:"Loi-écran transparent",
+   prob:"Le juge administratif peut-il contrôler la constitutionnalité d'un décret pris sur le fondement d'une loi ?",
+   sol:"Normalement, le CE aurait dû répondre qu'il n'était pas compétent. Mais il va faire application de la théorie de l'écran transparent. En l'espèce, les dispositions du décret attaqué ne se bornent pas à tirer les conséquences nécessaires de la loi. Ce décret prévoit des mesures réglementaires propres et autonomes. La loi ne fait donc pas écran.",
+   port:"Confirmation de la jurisprudence Quintin. Rappelle que l'écran de loi n'est pas total.",
+   cit:"La loi ne fait donc pas écran au contrôle du juge.",
+   mots:["écran transparent","mesures autonomes","Quintin"],
+   lies:[21,23,24],diff:4},
+  {id:26,nom:"Benjamin",jur:"Conseil d'État",date:"19 mai 1933",an:1933,imp:"tres-important",theme:"Police administrative",
+   prob:"Une autorité de police peut-elle interdire une réunion publique de manière absolue et indéfinie ?",
+   sol:"Le CE censure la mesure de police excessive. Il pose le principe selon lequel toute mesure de police doit être nécessaire, adaptée et proportionnée au but d'ordre public poursuivi.",
+   port:"Arrêt fondateur du principe de proportionnalité des mesures de police. Conséquence de l'État de droit.",
+   cit:"Les mesures de police doivent être nécessaires, adaptées et proportionnées.",
+   mots:["proportionnalité","police administrative","liberté de réunion"],
+   lies:[27],diff:3},
+  {id:27,nom:"Ordonnance TA Melun, 20 juin 2024",jur:"Tribunal administratif de Melun",date:"20 juin 2024",an:2024,imp:"normal",theme:"Police administrative",
+   prob:"Le maire peut-il réglementer de manière permanente l'usage des écrans sur la voie publique ?",
+   sol:"Le juge des référés considère que le maire a agi dans ses pouvoirs de police mais qu'il est allé au-delà de ce qui était nécessaire, portant atteinte aux libertés fondamentales. Il suspend l'arrêté.",
+   port:"Application moderne du principe de proportionnalité (Benjamin). Le juge peut suspendre en urgence les mesures de police excessives via le référé.",
+   cit:"Le maire ne peut prendre n'importe quel type d'actes : toute mesure de police doit être nécessaire, adaptée et proportionnée.",
+   mots:["référé","proportionnalité","libertés fondamentales"],
+   lies:[26],diff:2},
+  {id:28,nom:"Sarran",jur:"Conseil d'État, Assemblée",date:"30 octobre 1998",an:1998,imp:"important",theme:"Bloc de constitutionnalité",
+   prob:"La Constitution est-elle la norme suprême dans l'ordre juridique interne, supérieure aux traités internationaux ?",
+   sol:"Le CE affirme que la suprématie conférée aux engagements internationaux ne s'applique pas dans l'ordre interne aux dispositions de valeur constitutionnelle. La Constitution est la norme première.",
+   port:"La Constitution est la norme première de l'ordre juridique interne. Elle prime sur les traités.",
+   cit:"La suprématie conférée aux engagements internationaux ne s'applique pas dans l'ordre interne aux dispositions de valeur constitutionnelle.",
+   mots:["Constitution","traité","hiérarchie des normes"],
+   lies:[16,20],diff:3},
+  {id:29,nom:"Société Sacilor",jur:"Conseil d'État",date:"9 novembre 2006",an:2006,imp:"important",theme:"Impartialité du juge administratif",
+   prob:"La participation au délibéré d'un membre du CE ayant siégé dans la formation consultative est-elle compatible avec l'impartialité ?",
+   sol:"Le CE rappelle les règles d'impartialité et consacre l'interdiction pour un membre du CE de participer au jugement d'un recours dirigé contre un acte pris après avis du CE s'il a pris part à la délibération de cet avis.",
+   port:"Suite de Procola et Kress. Conduit au décret du 6 mars 2008 créant l'article R122-21-1 du CJA.",
+   cit:"Les membres du CE ne peuvent participer au jugement des recours dirigés contre les actes pris après avis du CE s'ils ont pris part à la délibération de cet avis.",
+   mots:["impartialité","R122-21-1","décret 2008"],
+   lies:[4,5,6],diff:3},
+  {id:30,nom:"CC, 22 juillet 1980, n°80-119 DC",jur:"Conseil constitutionnel",date:"22 juillet 1980",an:1980,imp:"tres-important",theme:"Constitutionnalisation du juge administratif",
+   prob:"L'indépendance de la juridiction administrative est-elle un principe à valeur constitutionnelle ?",
+   sol:"Le CC consacre l'indépendance de la juridiction administrative comme PFRLR, en se fondant sur la loi du 24 mai 1872. Ce principe a valeur constitutionnelle.",
+   port:"Première constitutionnalisation de l'indépendance du juge administratif.",
+   cit:"L'indépendance de la juridiction administrative est un principe fondamental reconnu par les lois de la République.",
+   mots:["indépendance","PFRLR","loi 1872"],
+   lies:[2,31],diff:4},
+  {id:31,nom:"CC, 28 juillet 1989",jur:"Conseil constitutionnel",date:"28 juillet 1989",an:1989,imp:"tres-important",theme:"Constitutionnalisation du juge administratif",
+   prob:"Le législateur peut-il confier au juge judiciaire le contentieux des décisions administratives relatives à l'entrée et au séjour des étrangers ?",
+   sol:"Le CC déclare la loi non conforme à la Constitution. Il considère qu'il n'est pas possible de confier au juge judiciaire dans ce domaine le pouvoir d'annuler ou de réformer les décisions des autorités administratives.",
+   port:"Délimite un noyau dur de compétence du juge administratif qui ne peut faire l'objet d'aménagements : le contentieux des étrangers.",
+   cit:"Il n'est pas possible de confier au juge judiciaire, en matière d'entrée et de séjour des étrangers, le pouvoir d'annuler ou de réformer les décisions des autorités administratives.",
+   mots:["noyau dur","étrangers","compétence"],
+   lies:[2],diff:4},
+  {id:32,nom:"CC, 20 janvier 1984",jur:"Conseil constitutionnel",date:"20 janvier 1984",an:1984,imp:"important",theme:"PFRLR",
+   prob:"Le principe d'indépendance des professeurs d'université est-il un PFRLR ?",
+   sol:"Le CC censure une loi qui ne respectait pas le principe d'indépendance des professeurs de l'université, dégagé comme PFRLR.",
+   port:"Illustration du contrôle de constitutionnalité des lois au regard des PFRLR. Une loi qui méconnaît un PFRLR est censurée.",
+   cit:"Le principe d'indépendance des professeurs de l'université est un PFRLR.",
+   mots:["PFRLR","indépendance","université"],
+   lies:[30,33],diff:3},
+  {id:33,nom:"Commissaire de la République en Nouvelle-Calédonie",jur:"Conseil d'État, Assemblée",date:"29 avril 1994",an:1994,imp:"important",theme:"PFRLR",
+   prob:"Le juge administratif peut-il contrôler un acte administratif au regard d'un PFRLR dégagé par le Conseil constitutionnel ?",
+   sol:"Le CE contrôle un acte administratif au regard d'un principe fondamental dégagé par le CC. Il fait application des PFRLR identifiés par le juge constitutionnel.",
+   port:"Tant le juge constitutionnel que le juge administratif font respecter les PFRLR.",
+   cit:"Le juge administratif contrôle les actes administratifs au regard des PFRLR dégagés par le juge constitutionnel.",
+   mots:["PFRLR","contrôle","acte administratif"],
+   lies:[32,34],diff:3},
+  {id:34,nom:"Association des anciens combattants d'oral",jur:"Conseil d'État",date:"24 janvier 1958",an:1958,imp:"normal",theme:"PFRLR",
+   prob:"Le CE peut-il dégager un PFRLR et en faire application avant 1958 ?",
+   sol:"Le CE dégage un principe et en fait application, illustrant sa pratique de dégager les PFRLR avant 1958.",
+   port:"Avant 1958, le CE dégage et applique lui-même les PFRLR.",
+   cit:"Le CE dégage un PFRLR et en fait application.",
+   mots:["PFRLR","avant 1958"],
+   lies:[17,18],diff:2},
+  {id:35,nom:"CE, 27 avril 1994, Allamigeon (rappel)",jur:"Conseil d'État",date:"27 avril 1994",an:1994,imp:"normal",theme:"Compétences PDR / PM",
+   prob:"Le PM peut-il modifier un décret délibéré en Conseil des ministres ?",
+   sol:"Le décret a été entaché d'incompétence. Le PM a commis un vice d'incompétence.",
+   port:"Application du parallélisme des formes et des compétences.",
+   cit:"Vice d'incompétence : autorité auteur d'un acte qu'elle n'avait pas le pouvoir juridique pour prendre.",
+   mots:["vice d'incompétence","parallélisme"],
+   lies:[8,9,12],diff:2},
+  {id:36,nom:"Avis CE, 27 novembre 1989, port de signes religieux",jur:"Conseil d'État, Avis",date:"27 novembre 1989",an:1989,imp:"normal",theme:"Impartialité et neutralité",
+   prob:"Quelle est la portée du principe de neutralité dans les établissements scolaires publics ?",
+   sol:"Le CE rend un avis indiquant que le port de signes religieux est interdit s'il présente un caractère ostentatoire ou revendicatif. C'est au ministre d'interpréter le terme 'ostentatoire'.",
+   port:"Illustration de la fonction consultative du CE (saisi par le ministre Jospin).",
+   cit:"Le port de signes religieux est interdit s'il présente un caractère ostentatoire.",
+   mots:["neutralité","signes religieux","avis"],
+   lies:[4,5],diff:2},
+  {id:37,nom:"Avis CE, 12 février 1960 (rappel)",jur:"Conseil d'État",date:"12 février 1960",an:1960,imp:"normal",theme:"Bloc de constitutionnalité",
+   prob:"L'article 8 DDHC peut-il être invoqué seul contre un décret ?",
+   sol:"Le CE rejette le recours. L'article 8 DDHC ne peut pas être lu seul. Il faut le combiner avec l'article 34 de la Constitution qui énonce une règle spéciale.",
+   port:"Illustration de la combinaison des normes constitutionnelles par le juge administratif.",
+   cit:"L'article 8 DDHC ne peut pas être lu seul.",
+   mots:["article 8 DDHC","article 34","règle spéciale"],
+   lies:[14,15],diff:2}
+];
+
+/* ============================================================
+   CONCEPTS (62)
+   ============================================================ */
+const CONCEPTS = [
+  {id:'c1',term:"Pouvoir réglementaire",cat:"definition",chap:"2.1",def:"Pouvoir d'édicter des actes généraux (administratifs) et impersonnels qui vont s'imposer à tous les citoyens / administrés.",articles:"Articles 21 et 13 de la Constitution",precisions:"Article 21 : le PM exerce le pouvoir réglementaire. Article 13 : le PDR signe les ordonnances et décrets délibérés en Conseil des ministres.",arrets:['Sicard','Meyet','Allamigeon','Malezieux','Reverdy']},
+  {id:'c2',term:"Privilège du préalable",cat:"definition",chap:"1.1",def:"Privilège de l'administration qui peut prendre, sans recueillir le consentement des intéressés, des actes qui vont s'imposer à tous les administrés et citoyens.",articles:"—",precisions:"C'est le pouvoir unilatéral de décision. L'acte est directement exécutoire tant qu'il n'est pas annulé par un juge.",arrets:[]},
+  {id:'c3',term:"Prérogatives de puissance publique (PPP)",cat:"definition",chap:"1.1",def:"Pouvoirs exorbitants du droit commun dont disposent les personnes publiques et que n'a pas une personne privée.",articles:"—",precisions:"Justification : les personnes publiques agissent dans l'intérêt général. Évoquées par le CC dans la décision du 23 janvier 1987.",arrets:['Conseil de la concurrence']},
+  {id:'c4',term:"Recours pour excès de pouvoir (REP)",cat:"definition",chap:"1.1",def:"Recours en annulation contre un acte administratif. Permet à un administré d'obtenir du juge administratif qu'il annule la décision.",articles:"Loi du 24 mai 1872, article 9",precisions:"Si le juge donne raison au requérant, l'acte sera annulé. C'est le recours le plus courant.",arrets:['Cadot','Arrighi']},
+  {id:'c5',term:"Recours gracieux / hiérarchique",cat:"definition",chap:"1.1",def:"Recours gracieux : demande à l'autorité qui a pris l'acte de revenir sur sa décision. Recours hiérarchique : demande au supérieur.",articles:"—",precisions:"Étaient obligatoires avant l'arrêt Cadot (1889).",arrets:['Cadot']},
+  {id:'c6',term:"Recours en annulation vs réformation",cat:"definition",chap:"1.1",def:"Recours en annulation (REP) : annulation pure et simple. Réformation : modifier la décision, en changer le contenu.",articles:"—",precisions:"Exemples : contentieux électoral, réduction d'amende.",arrets:['Conseil de la concurrence']},
+  {id:'c7',term:"Justice retenue vs justice déléguée",cat:"definition",chap:"1.1",def:"Justice retenue : le juge ne rend pas la justice en son nom. Justice déléguée : le juge statue souverainement.",articles:"Loi du 24 mai 1872, article 9",precisions:"Passage de la justice retenue à la justice déléguée en 1872 pour le CE.",arrets:['Cadot']},
+  {id:'c8',term:"Déclinatoire de compétence / arrêté de conflit",cat:"definition",chap:"1.1",def:"Déclinatoire : acte du préfet qui conteste la compétence du tribunal judiciaire. Arrêté de conflit : acte qui dessaisit le tribunal civil et renvoie l'affaire au Tribunal des conflits.",articles:"—",precisions:"Utilisé dans l'affaire Blanco.",arrets:['Blanco']},
+  {id:'c9',term:"Tribunal des conflits",cat:"institution",chap:"1.1",def:"Juridiction chargée de répartir entre l'ordre administratif et l'ordre judiciaire les contentieux.",articles:"—",precisions:"A rendu l'arrêt Blanco (1873).",arrets:['Blanco']},
+  {id:'c10',term:"Double degré de juridiction",cat:"principe",chap:"1.2",def:"Possibilité, lorsqu'on n'est pas satisfait d'un jugement, de demander à un 2e juge de réexaminer l'affaire intégralement.",articles:"—",precisions:"Mis en œuvre par les Cours administratives d'appel (créées en 1987).",arrets:[]},
+  {id:'c11',term:"Pourvoi en cassation",cat:"definition",chap:"1.2",def:"Recours devant le CE contre un arrêt rendu par une CAA. Le CE censure uniquement s'il y a une erreur de droit.",articles:"—",precisions:"Le CE est la juridiction suprême de l'ordre administratif.",arrets:[]},
+  {id:'c12',term:"Inamovibilité des membres du CE",cat:"institution",chap:"1.2",def:"Garantie de l'indépendance des membres du CE : on ne peut pas les révoquer.",articles:"Article L131-2 du Code de justice administrative",precisions:"Les membres du CE n'ont pas la qualité de magistrat.",arrets:[]},
+  {id:'c13',term:"Établissement public (EP)",cat:"definition",chap:"2.1",def:"Personne morale de droit public créée par la loi ou par décret pour gérer un service public spécifique.",articles:"Articles 34 et 37 de la Constitution",precisions:"Le CC impose que le législateur dégage des règles constitutives pour chaque catégorie.",arrets:[]},
+  {id:'c14',term:"Libre administration des collectivités territoriales",cat:"principe",chap:"2.1",def:"Principe selon lequel les collectivités territoriales s'administrent librement par des conseils élus.",articles:"Articles 34 et 72 de la Constitution",precisions:"Article 1 : l'organisation de la République est décentralisée.",arrets:[]},
+  {id:'c15',term:"Emplois à la décision du gouvernement",cat:"institution",chap:"2.1",def:"Emplois supérieurs laissés à la discrétion du gouvernement. Leur titulaire peut perdre son poste à tout moment.",articles:"Code général de la fonction publique",precisions:"Nommés par le PDR : secrétaire général du gouvernement, préfets, ambassadeurs, recteurs.",arrets:['Malezieux','Reverdy']},
+  {id:'c16',term:"Contreseing ministériel",cat:"principe",chap:"2.1",def:"Les actes du PDR (article 19) et les décrets du PM (article 22) sont contresignés par les ministres chargés de leur exécution.",articles:"Articles 19 et 22 de la Constitution",precisions:"Vérifié dans Sicard.",arrets:['Sicard']},
+  {id:'c17',term:"Extradition",cat:"definition",chap:"2.2",def:"Acte par lequel un État étranger demande que l'un de ses ressortissants qui se trouve sur le territoire français soit renvoyé dans son pays pour être jugé.",articles:"—",precisions:"Pas d'extradition pour motif politique (PFRLR).",arrets:['Avis CE, 9 novembre 1995','Koné']},
+  {id:'c18',term:"Commissaire du gouvernement / Rapporteur public",cat:"institution",chap:"1.2",def:"Magistrat totalement indépendant qui donne son avis en droit sur l'affaire. Les juges ne sont pas obligés de le suivre.",articles:"Décret du 7 janvier 2009",precisions:"Après Kress, changement de nom (rapporteur public), ne participe plus au délibéré.",arrets:['Kress c. France']},
+  {id:'c19',term:"Théorie des apparences",cat:"theorie",chap:"1.2",def:"Théorie selon laquelle la justice ne doit pas seulement être rendue, elle doit donner le sentiment qu'elle a bien été rendue.",articles:"Article 6§1 CEDH",precisions:"Fondement des arrêts Procola (1995) et Kress (2001).",arrets:['Procola','Kress c. France','CE, 15 avril 2024','Société Sacilor']},
+  {id:'c20',term:"Théorie de la loi-écran",cat:"theorie",chap:"2.3",def:"Théorie selon laquelle la loi qui s'interpose entre l'acte administratif attaqué et la Constitution empêche le juge d'examiner la constitutionnalité de la loi.",articles:"Article 61 de la Constitution",precisions:"Apparue en 1950 dans les conclusions d'un commissaire du gouvernement.",arrets:['Arrighi','Deprez','Eaux et rivières de Bretagne']},
+  {id:'c21',term:"Écran législatif transparent",cat:"theorie",chap:"2.3",def:"Théorie selon laquelle, dans certains cas, la loi n'empêche pas le juge administratif d'opérer un contrôle de constitutionnalité de l'acte réglementaire.",articles:"—",precisions:"S'applique quand la loi n'est qu'une habilitation sans préciser les conditions (Quintin), ou quand le décret prévoit des mesures autonomes.",arrets:['Quintin','Fédération nationale de la pêche en France']},
+  {id:'c22',term:"PFRLR",cat:"principe",chap:"2.2",def:"Principes non écrits dégagés par le juge, ayant valeur constitutionnelle, qui s'imposent au législateur comme à l'administration.",articles:"Préambule de la Constitution de 1946",precisions:"Avant 1958, dégagés par le CE. Après 1958, dégagés en principe par le CC. Exemples : liberté d'association, indépendance de la juridiction administrative, interdiction d'extrader pour motif politique.",arrets:['Amicales des anamites de Paris','CE, 16 juillet 1956','Avis CE, 9 novembre 1995','Koné','CC, 22 juillet 1980','CC, 20 janvier 1984']},
+  {id:'c23',term:"Bloc de constitutionnalité",cat:"principe",chap:"2.2",def:"Ensemble des normes à valeur constitutionnelle : Constitution de 1958 + Préambule + DDHC + Préambule de 1946 + Charte de l'environnement.",articles:"Préambule de la Constitution de 1958",precisions:"Le juge administratif fait respecter le bloc de constitutionnalité dans le cadre du bloc de légalité administratif.",arrets:['Eky','CC, 28 novembre 1973','Commune d\'Annecy','France terre d\'asile']},
+  {id:'c24',term:"Invocabilité des préambules",cat:"principe",chap:"2.2",def:"Toutes les dispositions du préambule ne sont pas directement invocables devant le juge. Le juge distingue celles précises et invocables, de celles vagues qui nécessitent une loi d'application.",articles:"Préambule de 1946, Préambule de 1958",precisions:"Exemple : alinéa 4 du préambule de 1946 (droit d'asile) non invocable.",arrets:['France terre d\'asile','Commune d\'Annecy']},
+  {id:'c25',term:"Bloc de légalité administratif",cat:"principe",chap:"2",def:"Ensemble des règles que le juge administratif fait respecter par l'administration : Constitution, traités, lois, PGD, règlements.",articles:"—",precisions:"L'administration est soumise au droit, mais à un droit spécifique.",arrets:[]},
+  {id:'c26',term:"Séparation des autorités administratives et judiciaires",cat:"principe",chap:"1.1",def:"Principe selon lequel les fonctions judiciaires sont distinctes et demeureront toujours séparées des fonctions administratives.",articles:"Loi des 16 et 24 août 1790 ; Décret du 16 fructidor an III ; DDHC article 16",precisions:"Fondement de la dualité de juridiction. La loi des 16 et 24 août 1790 n'a pas valeur constitutionnelle (CC 1987).",arrets:['Conseil de la concurrence','Blanco','Cadot']},
+  {id:'c27',term:"Conception française de la séparation des pouvoirs",cat:"theorie",chap:"1.1",def:"Formule issue de la décision du CC du 23 janvier 1987. Désigne la dualité de juridiction : un ordre judiciaire et un ordre administratif.",articles:"—",precisions:"Deux juges de droit. La conception française de la séparation des pouvoirs implique l'existence du juge administratif.",arrets:['Conseil de la concurrence']},
+  {id:'c28',term:"Indépendance de la juridiction administrative",cat:"principe",chap:"1.1",def:"Principe à valeur constitutionnelle selon lequel la juridiction administrative est indépendante. Une loi ne peut pas la supprimer.",articles:"Loi du 24 mai 1872",precisions:"Dégagé comme PFRLR par le CC le 22 juillet 1980. Constitutionnalisé dans la décision du 23 janvier 1987.",arrets:['CC, 22 juillet 1980','Conseil de la concurrence']},
+  {id:'c29',term:"Réserve constitutionnelle de compétence du juge administratif",cat:"principe",chap:"1.1",def:"Principe selon lequel les décisions prises par les autorités administratives dans l'exercice du pouvoir exécutif relèvent du juge administratif.",articles:"Considérant 15, décision CC 23 janvier 1987",precisions:"Protège le juge administratif. Noyau dur : contentieux des étrangers.",arrets:['Conseil de la concurrence','CC, 28 juillet 1989']},
+  {id:'c30',term:"Loi du 24 mai 1872",cat:"texte",chap:"1.1",def:"Article 9 : 'Le Conseil d'État statue souverainement sur les recours en matière contentieuse administrative et sur les demandes d'annulation pour excès de pouvoir.'",articles:"Loi du 24 mai 1872, article 9",precisions:"Passage de la justice retenue à la justice déléguée.",arrets:['Cadot','CC, 22 juillet 1980']},
+  {id:'c31',term:"Édit de Saint-Germain",cat:"texte",chap:"1.1",def:"Édit royal de 1641 par lequel le roi interdit expressément aux tribunaux judiciaires d'avoir connaissance des affaires de l'État et de l'administration.",articles:"Édit de Saint-Germain, 1641",precisions:"Origine historique de la dualité de juridiction sous l'Ancien Régime.",arrets:[]},
+  {id:'c32',term:"Loi des 16 et 24 août 1790",cat:"texte",chap:"1.1",def:"Loi révolutionnaire affirmant que les fonctions judiciaires sont distinctes et demeureront toujours séparées des fonctions administratives.",articles:"Loi des 16 et 24 août 1790",precisions:"N'a pas valeur constitutionnelle (CC 1987, considérant 15).",arrets:['Conseil de la concurrence']},
+  {id:'c33',term:"Décret du 16 fructidor an III",cat:"texte",chap:"1.1",def:"Texte révolutionnaire réaffirmant la séparation des autorités administratives et judiciaires.",articles:"Décret du 16 fructidor an III",precisions:"Complète la loi des 16 et 24 août 1790.",arrets:[]},
+  {id:'c34',term:"Loi du 28 pluviôse an VIII",cat:"texte",chap:"1.2",def:"Loi créant les conseils de préfecture, ancêtres des tribunaux administratifs. Compétence d'attribution.",articles:"Loi du 28 pluviôse an VIII",precisions:"Deviennent tribunaux administratifs en 1953, juges de droit commun en premier ressort.",arrets:[]},
+  {id:'c35',term:"Article 6§1 de la CEDH",cat:"texte",chap:"1.2",def:"'Toute personne a droit à ce que sa cause soit entendue équitablement, publiquement et dans un délai raisonnable, par un tribunal indépendant et impartial.'",articles:"Article 6§1 CEDH",precisions:"Fondement des arrêts Procola (1995) et Kress (2001).",arrets:['Procola','Kress c. France']},
+  {id:'c36',term:"Décret du 7 janvier 2009",cat:"texte",chap:"1.2",def:"Décret pris en France en réponse à l'arrêt Kress. Modifie le nom du commissaire du gouvernement (devient rapporteur public) et son rôle.",articles:"Décret du 7 janvier 2009",precisions:"Le rapporteur public ne participe plus au délibéré. Communique le sens de ses conclusions avant l'audience.",arrets:['Kress c. France']},
+  {id:'c37',term:"Article R122-21-1 du CJA",cat:"texte",chap:"1.2",def:"'Les membres du CE ne peuvent participer au jugement des recours dirigés contre les actes pris après avis du CE s'ils ont pris part à la délibération de cet avis.'",articles:"Article R122-21-1 du CJA",precisions:"Créé par décret du 6 mars 2008, en réponse à Société Sacilor (2006).",arrets:['Société Sacilor']},
+  {id:'c38',term:"Article 61 de la Constitution",cat:"texte",chap:"2.3",def:"Article qui confie au Conseil constitutionnel le contrôle de constitutionnalité des lois.",articles:"Article 61 de la Constitution de 1958",precisions:"Fondement de l'arrêt Deprez (2005).",arrets:['Deprez']},
+  {id:'c39',term:"Article 66 de la Constitution",cat:"texte",chap:"2.2",def:"'Nul ne peut être arbitrairement détenu. L'autorité judiciaire, gardienne de la liberté individuelle, assure le respect de ce principe.'",articles:"Article 66 de la Constitution",precisions:"Invoqué par le CC en 1973 pour interdire au pouvoir réglementaire de créer des contraventions avec peine privative de liberté.",arrets:['CC, 28 novembre 1973']},
+  {id:'c40',term:"Article 8 de la DDHC",cat:"texte",chap:"2.2",def:"'La loi ne doit établir que des peines strictement et évidemment nécessaires...'",articles:"Article 8 DDHC",precisions:"Invoqué dans Eky. Lecture restrictive combinée avec l'article 34.",arrets:['Eky']},
+  {id:'c41',term:"Article 34 de la Constitution",cat:"texte",chap:"2.2",def:"Article énumérant les matières relevant du domaine législatif.",articles:"Article 34 de la Constitution",precisions:"Le CE considère que cet article énonce une règle spéciale qui l'emporte sur l'article 8 DDHC (Eky 1960).",arrets:['Eky']},
+  {id:'c42',term:"Article 7 de la Charte de l'environnement",cat:"texte",chap:"2.2",def:"'Toute personne a le droit d'accéder aux informations relatives à l'environnement détenues par les autorités publiques.'",articles:"Article 7 de la Charte de l'environnement",precisions:"Invoqué dans Commune d'Annecy (2008).",arrets:['Commune d\'Annecy']},
+  {id:'c43',term:"Article 38 de la Constitution",cat:"texte",chap:"1.2",def:"Article permettant au gouvernement de demander au Parlement l'autorisation de prendre par ordonnances des mesures normalement du domaine de la loi.",articles:"Article 38 de la Constitution",precisions:"Avec l'article 39, fonde la consultation obligatoire du CE.",arrets:[]},
+  {id:'c44',term:"Article 39 de la Constitution",cat:"texte",chap:"1.2",def:"Article relatif à l'initiative législative et à la consultation du CE sur les projets de loi.",articles:"Article 39 de la Constitution",precisions:"Le CE doit être consulté avant le dépôt d'un projet de loi.",arrets:[]},
+  {id:'c45',term:"Article 21 de la Constitution",cat:"texte",chap:"2.1",def:"'Le Premier ministre dirige l'action du Gouvernement... il exerce le pouvoir réglementaire.'",articles:"Article 21 de la Constitution",precisions:"Fonde la compétence réglementaire de principe du PM.",arrets:['Sicard','Meyet']},
+  {id:'c46',term:"Article 13 de la Constitution",cat:"texte",chap:"2.1",def:"'Le Président de la République signe les ordonnances et les décrets délibérés en Conseil des ministres.'",articles:"Article 13 de la Constitution",precisions:"Interprétation favorable au PDR dans Meyet (1992).",arrets:['Meyet','Allamigeon']},
+  {id:'c47',term:"Article 72 de la Constitution",cat:"texte",chap:"2.1",def:"Article relatif aux collectivités territoriales : libre administration par des conseils élus.",articles:"Article 72 de la Constitution",precisions:"La loi détermine les principes fondamentaux de la libre-administration.",arrets:[]},
+  {id:'c48',term:"Article 16 de la DDHC",cat:"texte",chap:"1.1",def:"'Toute société dans laquelle la garantie des droits n'est pas assurée ni la séparation des pouvoirs déterminée n'a point de Constitution.'",articles:"Article 16 DDHC",precisions:"Fonde le principe de séparation des pouvoirs.",arrets:[]},
+  {id:'c49',term:"Conseil d'État",cat:"institution",chap:"1.2",def:"Juridiction suprême de l'ordre administratif. Créé en l'an VIII. Statue en dernier ressort. Double fonction consultative et juridictionnelle.",articles:"Articles L131-2 et suivants du CJA",precisions:"Cloison entre les deux fonctions pour préserver l'impartialité.",arrets:['CE, 15 avril 2024','Procola','Kress c. France']},
+  {id:'c50',term:"Cours administratives d'appel (CAA)",cat:"institution",chap:"1.2",def:"Juridictions administratives créées en 1987. Mettent en œuvre le double degré de juridiction.",articles:"—",precisions:"Leurs membres sont des magistrats.",arrets:[]},
+  {id:'c51',term:"Tribunaux administratifs (TA)",cat:"institution",chap:"1.2",def:"Juridictions administratives de premier ressort depuis 1953 (avant : conseils de préfecture). Compétence générale territoriale.",articles:"—",precisions:"Jugent collégialement mais de plus en plus à juge unique en référé.",arrets:['Ordonnance TA Melun, 20 juin 2024']},
+  {id:'c52',term:"École de la puissance publique",cat:"theorie",chap:"1.1",def:"École de Toulouse, à la tête de laquelle se trouve Maurice Hauriou. Justifie le droit administratif par la puissance publique et les PPP.",articles:"—",precisions:"S'oppose à l'école du service public (Duguit).",arrets:['Blanco']},
+  {id:'c53',term:"École du service public",cat:"theorie",chap:"1.1",def:"École à la tête de laquelle se trouve Léon Duguit. Justifie le droit administratif par la notion de service public.",articles:"—",precisions:"L'arrêt Blanco parle de service public, non de PPP.",arrets:['Blanco']},
+  {id:'c54',term:"Georges Vedel — droit administratif 'essentiellement jurisprudentiel'",cat:"theorie",chap:"1.1",def:"Formule selon laquelle le droit administratif est un droit 'essentiellement jurisprudentiel' : majoritairement mais également dans son origine.",articles:"—",precisions:"Le droit administratif est créé par le juge administratif lui-même.",arrets:['Blanco']},
+  {id:'c55',term:"Georges Vedel — 'Les bases constitutionnelles du droit administratif' (1954)",cat:"theorie",chap:"2",def:"Article démontrant que le droit administratif trouve sa source dans la Constitution.",articles:"—",precisions:"Reste d'actualité sous la Ve République.",arrets:['Commune d\'Annecy','Sarran']},
+  {id:'c56',term:"Common law (Dicey)",cat:"theorie",chap:"1.1",def:"Système juridique anglo-saxon dans lequel il n'y a pas de juge administratif. Albert Dicey redoute la protection des fonctionnaires contre les citoyens.",articles:"—",precisions:"Un juge unique embrasse toutes les affaires.",arrets:[]},
+  {id:'c57',term:"Légicentrisme",cat:"theorie",chap:"2.3",def:"Doctrine selon laquelle la loi est la norme suprême, expression de la volonté générale, qui ne peut pas être mise en cause.",articles:"—",precisions:"Fondement de la position du CE dans Arrighi (1936).",arrets:['Arrighi']},
+  {id:'c58',term:"État de droit",cat:"principe",chap:"1.1",def:"Principe selon lequel l'État et l'administration sont soumis au droit.",articles:"—",precisions:"Fondement du contrôle juridictionnel. Illustré par Benjamin.",arrets:['Benjamin']},
+  {id:'c59',term:"Référé (procédure d'urgence)",cat:"institution",chap:"1.2",def:"Procédure d'urgence permettant de demander au juge de statuer rapidement. Permet la suspension d'une décision administrative qui porte atteinte.",articles:"—",precisions:"Illustré par l'ordonnance TA Melun du 20 juin 2024.",arrets:['Ordonnance TA Melun, 20 juin 2024']},
+  {id:'c60',term:"Contrôle de constitutionnalité — voie d'action vs voie d'exception",cat:"principe",chap:"2.3",def:"Voie d'action : demander directement au CE de déclarer une loi inconstitutionnelle. Voie d'exception : attaquer un acte administratif en soulevant l'inconstitutionnalité de la loi.",articles:"Article 61 de la Constitution",precisions:"Le CE refuse les deux voies (Deprez 2005).",arrets:['Deprez','Arrighi']},
+  {id:'c61',term:"Noyau dur de compétence du juge administratif",cat:"principe",chap:"2.3",def:"Matières dans lesquelles la compétence du juge administratif ne peut pas être transférée au juge judiciaire.",articles:"Décision CC 28 juillet 1989",precisions:"Exemple : contentieux des étrangers.",arrets:['CC, 28 juillet 1989','Conseil de la concurrence']},
+  {id:'c62',term:"Bonne administration de la justice",cat:"principe",chap:"1.1",def:"Motif permettant de déroger au principe de compétence du juge administratif pour confier le contentieux à un autre juge, dans l'intérêt du justiciable.",articles:"—",precisions:"Fondement de l'exception du Conseil de la concurrence (1987).",arrets:['Conseil de la concurrence']}
+];
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+const BADGES = [
+  {id:'first',icon:'🌱',name:'Premier pas',desc:'1 arrêt maîtrisé',check:s=>countMastered()>=1},
+  {id:'half',icon:'⚡',name:'Moitié',desc:'13 arrêts maîtrisés',check:s=>countMastered()>=13},
+  {id:'all',icon:'🏆',name:'Complet',desc:'25 arrêts maîtrisés',check:s=>countMastered()>=25},
+  {id:'all37',icon:'👑',name:'Légende',desc:'37 arrêts maîtrisés',check:s=>countMastered()>=37},
+  {id:'streak3',icon:'🔥',name:'En feu',desc:'3 jours de suite',check:s=>s.streak>=3},
+  {id:'streak7',icon:'🌋',name:'Marathonien',desc:'7 jours de suite',check:s=>s.streak>=7},
+  {id:'streak30',icon:'💎',name:'Diamant',desc:'30 jours de suite',check:s=>s.streak>=30},
+  {id:'xp100',icon:'⭐',name:'Apprenti',desc:'100 XP',check:s=>s.xp>=100},
+  {id:'xp500',icon:'🌟',name:'Confirmé',desc:'500 XP',check:s=>s.xp>=500},
+  {id:'xp2000',icon:'✨',name:'Maître',desc:'2000 XP',check:s=>s.xp>=2000},
+  {id:'perfect',icon:'🎯',name:'Impeccable',desc:'10 bonnes d\'affilée',check:s=>s.maxCombo>=10},
+  {id:'exam',icon:'📝',name:'Candidat',desc:'Terminer 1 examen',check:s=>s.examsDone>=1},
+  {id:'exam90',icon:'🎓',name:'Majeur',desc:'Examen ≥ 90%',check:s=>s.bestExam>=90},
+  {id:'cours',icon:'📖',name:'Érudit',desc:'Consulter 10 notions',check:s=>(s.conceptsViewed||0)>=10}
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const STORAGE_KEY = 'droit-admin-s1-v3';
+const defaultState = {
+  prog: {},
+  settings: { theme:'dark', includeNormal:true, dailyGoal:30 },
+  stats: {
+    xp:0, level:1, streak:0, lastDay:null,
+    totalReviews:0, correctReviews:0,
+    maxCombo:0, currentCombo:0,
+    examsDone:0, bestExam:0,
+    dailyActivity:{}, dailyTime:{}, badges:[], conceptsViewed:0
+  }
+};
+let state = JSON.parse(JSON.stringify(defaultState));
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      state = { ...defaultState, ...p };
+      state.settings = { ...defaultState.settings, ...(p.settings||{}) };
+      state.stats = { ...defaultState.stats, ...(p.stats||{}) };
+    }
+  } catch(e){ console.warn('load',e); }
+}
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+
+/* ============================================================
+   SRS
+   ============================================================ */
+function getProg(id) { return state.prog[id] || { level:0, ease:2.5, interval:0, nextReview:0, lastReview:0, reps:0 }; }
+function setProg(id, p) { state.prog[id] = p; save(); updateHeader(); updateDashboard(); updateNavBadge(); }
+
+function srsReview(id, q) {
+  const p = getProg(id);
+  const now = Date.now();
+  p.lastReview = now;
+  state.stats.totalReviews++;
+  const today = dayKey(new Date());
+  state.stats.dailyActivity[today] = (state.stats.dailyActivity[today]||0)+1;
+  trackStreak();
+  if (q === 0) {
+    p.reps = 0; p.interval = 0; p.level = 0;
+    p.nextReview = now + 60*1000;
+    state.stats.currentCombo = 0;
+  } else {
+    p.reps++;
+    state.stats.correctReviews++;
+    state.stats.currentCombo++;
+    if (state.stats.currentCombo > state.stats.maxCombo) state.stats.maxCombo = state.stats.currentCombo;
+    if (q === 1) p.ease = Math.max(1.3, p.ease - 0.15);
+    else if (q === 2) p.ease = Math.max(1.3, p.ease - 0.05);
+    else if (q === 3) p.ease = Math.min(3.0, p.ease + 0.1);
+    if (p.reps === 1) p.interval = 1;
+    else if (p.reps === 2) p.interval = 3;
+    else p.interval = Math.round(p.interval * p.ease);
+    if (q === 1) p.interval = Math.max(1, Math.round(p.interval * 0.7));
+    if (q === 3) p.interval = Math.round(p.interval * 1.3);
+    p.interval = Math.min(p.interval, 365);
+    p.nextReview = now + p.interval * 24*60*60*1000;
+    p.level = p.reps >= 6 ? 6 : Math.min(6, p.reps + (p.reps >= 3 ? 1 : 0));
+  }
+  setProg(id, p);
+  const xpGain = q===0 ? 1 : q===1 ? 3 : q===2 ? 5 : 7;
+  addXp(xpGain);
+  if (q >= 2) toast('+'+xpGain+' XP', 'xp');
+}
+function addXp(n) {
+  state.stats.xp += n;
+  const newLevel = Math.floor(Math.sqrt(state.stats.xp / 50)) + 1;
+  if (newLevel > state.stats.level) { state.stats.level = newLevel; toast('🏆 Niveau '+newLevel+' !', 'badge'); }
+  else state.stats.level = newLevel;
+  save(); updateHeader();
+}
+function dayKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function trackStreak() {
+  const today = dayKey(new Date());
+  const last = state.stats.lastDay;
+  if (last === today) return;
+  if (last) {
+    const diff = Math.round((new Date(today) - new Date(last))/(24*60*60*1000));
+    if (diff === 1) state.stats.streak++;
+    else if (diff > 1) state.stats.streak = 1;
+  } else state.stats.streak = 1;
+  state.stats.lastDay = today;
+  save(); updateHeader();
+}
+function getArrets() { return ARRETS.filter(a => state.settings.includeNormal || a.imp !== 'normal'); }
+function dueArrets() { const now = Date.now(); return getArrets().filter(a => { const p = getProg(a.id); return p.nextReview === 0 || p.nextReview <= now; }); }
+function countMastered() { return getArrets().filter(a => getProg(a.id).level >= 5).length; }
+function checkBadges() {
+  BADGES.forEach(b => {
+    if (!state.stats.badges.includes(b.id) && b.check(state.stats)) {
+      state.stats.badges.push(b.id);
+      toast('🏅 '+b.name, 'badge');
+      save();
+    }
+  });
+}
+function toast(msg, type='') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'all 0.3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(() => el.remove(), 300);
+  }, 2000);
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function go(tab) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  const btn = document.querySelector(`nav button[data-tab="${tab}"]`);
+  if (btn) btn.classList.add('active');
+  if (tab === 'dashboard') { updateDashboard(); renderHeatmap(); renderBadges(); renderThemeProgress(); }
+  if (tab === 'fiches') renderFiches();
+  if (tab === 'cours') renderCours();
+  if (tab === 'srs') renderSrs();
+  if (tab === 'exam') renderExamHome();
+  if (tab === 'audio') renderAudioHome();
+  if (tab === 'quiz') renderQuiz();
+  if (tab === 'stats') renderStats();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => go(b.dataset.tab)));
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+function updateHeader() {
+  document.getElementById('hStreak').textContent = state.stats.streak;
+  document.getElementById('hLevel').textContent = state.stats.level;
+  document.getElementById('hXp').textContent = state.stats.xp;
+  checkBadges();
+}
+function updateNavBadge() {
+  const due = dueArrets().length;
+  const el = document.getElementById('navDue');
+  if (due > 0) { el.textContent = due; el.style.display = 'inline-block'; }
+  else el.style.display = 'none';
+  const qa = document.getElementById('qaDue');
+  if (qa) qa.textContent = due + ' carte' + (due>1?'s':'') + ' due' + (due>1?'s':'');
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function updateDashboard() {
+  const arr = getArrets();
+  let mastered=0, learning=0, due=0;
+  const now = Date.now();
+  arr.forEach(a => {
+    const p = getProg(a.id);
+    if (p.level >= 5) mastered++;
+    else if (p.level >= 2) learning++;
+    if (p.nextReview > 0 && p.nextReview <= now) due++;
+  });
+  document.getElementById('dMastered').textContent = mastered;
+  document.getElementById('dTotal').textContent = arr.length;
+  document.getElementById('dLearning').textContent = learning;
+  document.getElementById('dDue').textContent = due;
+  document.getElementById('dLevel').textContent = state.stats.level;
+  document.getElementById('dXp').textContent = state.stats.xp;
+  document.getElementById('dMasteredBar').style.width = (mastered/arr.length*100)+'%';
+  updateNavBadge();
+}
+function renderThemeProgress() {
+  const arr = getArrets();
+  const themes = {};
+  arr.forEach(a => {
+    if (!themes[a.theme]) themes[a.theme] = {total:0, mastered:0};
+    themes[a.theme].total++;
+    if (getProg(a.id).level >= 5) themes[a.theme].mastered++;
+  });
+  document.getElementById('themeProgress').innerHTML = Object.entries(themes).sort((a,b)=>b[1].total-a[1].total).map(([t,d]) => {
+    const pct = Math.round(d.mastered/d.total*100);
+    return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span>${t}</span><span style="color:var(--text-3)">${d.mastered}/${d.total}</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+}
+function renderHeatmap() {
+  const hm = document.getElementById('heatmap');
+  const weeks = 12;
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(start.getDate() - (weeks*7 - 1));
+  const dow = (start.getDay() + 6) % 7;
+  start.setDate(start.getDate() - dow);
+  let html = '';
+  for (let w = 0; w < weeks + 1; w++) {
+    for (let d = 0; d < 7; d++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + w*7 + d);
+      if (day > today) { html += `<div class="hm-cell" style="visibility:hidden"></div>`; continue; }
+      const k = dayKey(day);
+      const c = state.stats.dailyActivity[k] || 0;
+      let lvl = '';
+      if (c >= 30) lvl = 'l4'; else if (c >= 20) lvl = 'l3'; else if (c >= 10) lvl = 'l2'; else if (c >= 1) lvl = 'l1';
+      html += `<div class="hm-cell ${lvl}" title="${k} : ${c} révisions"></div>`;
+    }
+  }
+  hm.innerHTML = html;
+}
+function renderBadges() {
+  document.getElementById('badges').innerHTML = BADGES.map(b => {
+    const unlocked = state.stats.badges.includes(b.id);
+    return `<div class="badge-item ${unlocked?'unlocked':''}"><div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div></div>`;
+  }).join('');
+}
+
+/* ============================================================
+   FICHES
+   ============================================================ */
+let ficheFilter = 'all', ficheSearch = '';
+function renderFiches() {
+  let arr = getArrets().slice();
+  if (['tres-important','important','normal'].includes(ficheFilter)) arr = arr.filter(a => a.imp === ficheFilter);
+  else if (ficheFilter === 'mastered') arr = arr.filter(a => getProg(a.id).level >= 5);
+  else if (ficheFilter === 'learning') arr = arr.filter(a => { const p = getProg(a.id); return p.level >= 2 && p.level < 5; });
+  else if (ficheFilter === 'new') arr = arr.filter(a => getProg(a.id).lastReview === 0);
+  if (ficheSearch) {
+    const q = ficheSearch.toLowerCase();
+    arr = arr.filter(a => a.nom.toLowerCase().includes(q) || a.theme.toLowerCase().includes(q) || a.cit.toLowerCase().includes(q) || a.sol.toLowerCase().includes(q) || a.prob.toLowerCase().includes(q) || a.mots.some(m => m.toLowerCase().includes(q)));
+  }
+  arr.sort((a,b)=>a.an-b.an);
+  const grid = document.getElementById('fichesGrid');
+  if (!arr.length) { grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>Aucun arrêt trouvé</div>`; return; }
+  grid.innerHTML = arr.map(a => {
+    const p = getProg(a.id);
+    const mastered = p.level >= 5;
+    const levelLabel = ['Nouveau','En cours','En cours','Bien','Bien','Maîtrisé','Maîtrisé'][p.level] || 'Nouveau';
+    const related = (a.lies||[]).map(id => { const r = ARRETS.find(x => x.id === id); return r ? `<span class="related-chip" onclick="scrollToArret(${id})">${r.nom}</span>` : ''; }).join('');
+    return `<div class="fiche ${a.imp} ${mastered?'mastered':''}" id="fiche-${a.id}">
+      <div class="fiche-head">
+        <div><div class="fiche-title">${a.nom} ${mastered?'<span class="mastered-check">✓</span>':''}</div><div class="fiche-meta">${a.jur} · ${a.date}</div></div>
+        <div class="fiche-tags"><span class="tag ${a.imp}">${impLabel(a.imp)}</span><span class="tag theme">${a.theme}</span></div>
+      </div>
+      <div class="fiche-body">
+        <div><div class="fb-label">Problème de droit</div><div>${a.prob}</div></div>
+        <div><div class="fb-label">Solution</div><div>${a.sol}</div></div>
+        <div><div class="fb-label">Portée</div><div>${a.port}</div></div>
+        <div class="citation">« ${a.cit} »</div>
+        ${related?`<div><div class="fb-label">Arrêts liés</div><div class="related">${related}</div></div>`:''}
+      </div>
+      <div class="fiche-actions">
+        <button class="small-btn" onclick="speakArret(${a.id})">🔊 Lire</button>
+        <button class="small-btn" onclick="startSingleCard(${a.id})">🎯 Réviser</button>
+        <button class="small-btn" onclick="markMastered(${a.id})">✓ Maîtrisé</button>
+        <button class="small-btn" onclick="resetCard(${a.id})">↺ Reset</button>
+        <span style="margin-left:auto;color:var(--text-3);font-size:11px;font-weight:700;align-self:center">${levelLabel} · ${p.interval||0}j</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function impLabel(i) { return {'tres-important':'Très important','important':'Important','normal':'Normal'}[i]; }
+function scrollToArret(id) { const el = document.getElementById('fiche-'+id); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }
+function markMastered(id) { setProg(id, {level:6, ease:2.5, interval:180, nextReview: Date.now()+180*24*60*60*1000, lastReview: Date.now(), reps:6}); toast('Arrêt maîtrisé ✓', 'success'); renderFiches(); }
+function resetCard(id) { setProg(id, {level:0, ease:2.5, interval:0, nextReview:0, lastReview:0, reps:0}); toast('Carte réinitialisée'); renderFiches(); }
+document.getElementById('searchInput').addEventListener('input', e => { ficheSearch = e.target.value; renderFiches(); });
+document.querySelectorAll('#filterChips .chip').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#filterChips .chip').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); ficheFilter = b.dataset.filter; renderFiches();
+  });
+});
+function speakArret(id) {
+  const a = ARRETS.find(x => x.id === id);
+  if (!a || !('speechSynthesis' in window)) { toast('TTS non supporté'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(`${a.nom}. ${a.jur}, ${a.date}. Problème : ${a.prob}. Solution : ${a.sol}. Portée : ${a.port}. Citation : ${a.cit}`);
+  u.lang = 'fr-FR'; u.rate = 1.05; speechSynthesis.speak(u);
+}
+
+/* ============================================================
+   COURS
+   ============================================================ */
+let coursFilter = 'all', coursSearch = '';
+function renderCours() {
+  let arr = CONCEPTS.slice();
+  if (coursFilter !== 'all') arr = arr.filter(c => c.cat === coursFilter);
+  if (coursSearch) {
+    const q = coursSearch.toLowerCase();
+    arr = arr.filter(c => c.term.toLowerCase().includes(q) || c.def.toLowerCase().includes(q) || (c.precisions||'').toLowerCase().includes(q) || (c.articles||'').toLowerCase().includes(q) || (c.arrets||[]).some(a=>a.toLowerCase().includes(q)));
+  }
+  const grid = document.getElementById('coursGrid');
+  if (!arr.length) { grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>Aucune notion trouvée</div>`; return; }
+  const catLabels = {definition:'Définition',principe:'Principe',theorie:'Théorie',institution:'Institution',texte:'Texte'};
+  const catColors = {definition:'#7c8fff',principe:'#22c55e',theorie:'#a78bfa',institution:'#22d3ee',texte:'#f59e0b'};
+  grid.innerHTML = arr.map(c => `
+    <div class="fiche" style="border-left-color:${catColors[c.cat]}">
+      <div class="fiche-head">
+        <div><div class="fiche-title">${c.term}</div>${c.chap?`<div class="fiche-meta">Cours §${c.chap}</div>`:''}</div>
+        <div class="fiche-tags"><span class="tag" style="background:${catColors[c.cat]}22;color:${catColors[c.cat]}">${catLabels[c.cat]}</span></div>
+      </div>
+      <div class="fiche-body">
+        <div><div class="fb-label">Définition</div><div>${c.def}</div></div>
+        ${c.articles && c.articles!=='—'?`<div><div class="fb-label">Fondement / Texte</div><div>${c.articles}</div></div>`:''}
+        ${c.precisions?`<div><div class="fb-label">Précisions</div><div>${c.precisions}</div></div>`:''}
+        ${c.arrets && c.arrets.length?`<div><div class="fb-label">Arrêts liés</div><div class="related">${c.arrets.map(a=>`<span class="related-chip" onclick="searchArretFromCours('${a.replace(/'/g,"\\'")}')">${a}</span>`).join('')}</div></div>`:''}
+      </div>
+      <div class="fiche-actions"><button class="small-btn" onclick="speakConcept('${c.id}')">🔊 Lire</button></div>
+    </div>
+  `).join('');
+}
+function searchArretFromCours(name) {
+  go('fiches');
+  document.getElementById('searchInput').value = name;
+  ficheSearch = name;
+  renderFiches();
+}
+function speakConcept(id) {
+  const c = CONCEPTS.find(x=>x.id===id);
+  if (!c || !('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(`${c.term}. ${c.def}. ${c.precisions||''}`);
+  u.lang = 'fr-FR'; speechSynthesis.speak(u);
+}
+document.getElementById('coursSearch')?.addEventListener('input', e => { coursSearch = e.target.value; renderCours(); });
+document.querySelectorAll('#coursChips .chip').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#coursChips .chip').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); coursFilter = b.dataset.cat; renderCours();
+  });
+});
+
+/* ============================================================
+   SRS SESSION
+   ============================================================ */
+let srsQueue = [], srsIdx = 0, srsFlipped = false, srsSessionStart = 0;
+function startSrsSession() {
+  go('srs');
+  const due = dueArrets();
+  const pool = due.length ? due : getArrets();
+  srsQueue = shuffle(pool).slice(0, 30);
+  srsIdx = 0; srsFlipped = false; srsSessionStart = Date.now();
+  renderSrs();
+}
+function startSingleCard(id) {
+  const a = ARRETS.find(x=>x.id===id); if (!a) return;
+  srsQueue = [a]; srsIdx = 0; srsFlipped = false; srsSessionStart = Date.now();
+  go('srs'); renderSrs();
+}
+function renderSrs() {
+  const area = document.getElementById('srsArea');
+  if (!srsQueue.length) {
+    area.innerHTML = `<div class="empty"><div class="empty-icon">🎯</div><h2 style="font-size:20px;margin-bottom:6px">Prêt à réviser ?</h2><p style="margin-bottom:20px">Lance une session SRS adaptée à ta progression.</p><button class="small-btn primary" onclick="startSrsSession()">▶️ Démarrer une session</button></div>`;
+    return;
+  }
+  if (srsIdx >= srsQueue.length) {
+    const dur = Math.round((Date.now()-srsSessionStart)/1000);
+    state.stats.dailyTime[dayKey(new Date())] = (state.stats.dailyTime[dayKey(new Date())]||0) + dur;
+    save();
+    area.innerHTML = `<div class="empty"><div class="empty-icon">🎉</div><h2 style="font-size:20px;margin-bottom:6px">Session terminée !</h2><p style="margin-bottom:8px">${srsQueue.length} cartes révisées</p><p style="color:var(--text-3);font-size:13px;margin-bottom:20px">Durée : ${Math.floor(dur/60)}min ${dur%60}s</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="small-btn primary" onclick="startSrsSession()">Nouvelle session</button><button class="small-btn" onclick="go('quiz')">Passer au quiz</button></div></div>`;
+    return;
+  }
+  const a = srsQueue[srsIdx];
+  const p = getProg(a.id);
+  const pct = Math.round(srsIdx / srsQueue.length * 100);
+  area.innerHTML = `
+    <div class="srs-progress"><span>${srsIdx+1} / ${srsQueue.length}</span><div class="srs-progress-bar"><div class="srs-progress-fill" style="width:${pct}%"></div></div><span style="color:var(--text-3)">Niv. ${p.level}/6</span></div>
+    <div class="flip-card ${srsFlipped?'flipped':''}" onclick="flipSrs()">
+      <div class="flip-card-inner">
+        <div class="flip-face front"><div style="text-align:center"><div style="font-size:11px;font-weight:800;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">${p.lastReview===0?'Nouvelle carte':'À réviser'}</div><div class="flip-question">${a.nom}</div><div class="flip-juridiction">${a.jur} · ${a.date}</div><div class="flip-hint">Clique pour révéler</div></div></div>
+        <div class="flip-face back"><div><div class="fb-label">Problème de droit</div><p>${a.prob}</p><div class="fb-label">Solution</div><p>${a.sol}</p><div class="fb-label">Portée</div><p>${a.port}</p><div class="fb-label">Citation clé</div><div class="citation">« ${a.cit} »</div></div></div>
+      </div>
+    </div>
+    ${srsFlipped ? `<div class="rate-row"><button class="rate-btn rate-again" onclick="rateSrs(0);event.stopPropagation()">😰 À revoir<small>&lt;1min</small></button><button class="rate-btn rate-hard" onclick="rateSrs(1);event.stopPropagation()">🤔 Difficile</button><button class="rate-btn rate-good" onclick="rateSrs(2);event.stopPropagation()">👍 Bien</button><button class="rate-btn rate-easy" onclick="rateSrs(3);event.stopPropagation()">😎 Facile</button></div>` : `<div style="text-align:center"><button class="small-btn primary" style="padding:12px 28px;font-size:14px" onclick="flipSrs()">Révéler la réponse</button></div>`}
+  `;
+}
+function flipSrs() { srsFlipped = !srsFlipped; renderSrs(); }
+function rateSrs(q) { srsReview(srsQueue[srsIdx].id, q); srsFlipped = false; srsIdx++; renderSrs(); }
+
+/* ============================================================
+   QUIZ
+   ============================================================ */
+let quizScore = {correct:0, total:0};
+function renderQuiz() {
+  const pool = getArrets();
+  const q = pool[Math.floor(Math.random()*pool.length)];
+  const type = Math.floor(Math.random()*4);
+  const others = shuffle(pool.filter(x=>x.id!==q.id)).slice(0,3);
+  let prompt, correct, options;
+  if (type === 0) { prompt = `Quelle est la <em>citation clé</em> de l'arrêt <strong>${q.nom}</strong> (${q.date}) ?`; correct = `« ${q.cit} »`; options = [correct, ...others.map(o=>`« ${o.cit} »`)]; }
+  else if (type === 1) { prompt = `Quel arrêt a posé la règle suivante ?<br><br><em>« ${q.cit} »</em>`; correct = q.nom; options = [correct, ...others.map(o=>o.nom)]; }
+  else if (type === 2) { prompt = `Quelle est la <em>portée</em> de l'arrêt <strong>${q.nom}</strong> (${q.date}) ?`; correct = q.port; options = [correct, ...others.map(o=>o.port)]; }
+  else { prompt = `Quel est le <em>problème de droit</em> de l'arrêt <strong>${q.nom}</strong> (${q.date}) ?`; correct = q.prob; options = [correct, ...others.map(o=>o.prob)]; }
+  options = shuffle(options);
+  document.getElementById('quizArea').innerHTML = `
+    <div class="card quiz-q"><div class="quiz-prompt">${prompt}</div><div class="quiz-options" id="quizOptions">${options.map(o => `<button class="quiz-opt" data-correct="${o===correct}">${o}</button>`).join('')}</div><div id="quizFeedback"></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px"><div style="color:var(--text-3);font-size:13px;font-weight:600">Score : ${quizScore.correct} / ${quizScore.total}</div><button class="small-btn" onclick="renderQuiz()">Suivant →</button></div>
+  `;
+  document.querySelectorAll('#quizOptions .quiz-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ok = btn.dataset.correct === 'true';
+      document.querySelectorAll('#quizOptions .quiz-opt').forEach(b => { b.disabled = true; if (b.dataset.correct === 'true') b.classList.add('correct'); });
+      if (!ok) btn.classList.add('wrong');
+      quizScore.total++; if (ok) quizScore.correct++;
+      document.getElementById('quizFeedback').innerHTML = ok ? `<span style="color:var(--success)">✓ Correct !</span>` : `<span style="color:var(--danger)">✗ Raté.</span> Bonne réponse : <strong>${correct}</strong>`;
+      if (ok) srsReview(q.id, 2); else srsReview(q.id, 0);
+    });
+  });
+}
+
+/* ============================================================
+   EXAM
+   ============================================================ */
+let examState = null, examTimerInterval = null;
+function renderExamHome() {
+  document.getElementById('examArea').innerHTML = `
+    <div class="page-head"><h1 class="page-title">Examen blanc</h1><p class="page-sub">Simulation chronométrée</p></div>
+    <div class="card exam-config">
+      <div class="panel-title">⚙️ Configuration</div>
+      <div class="exam-option-row"><div><div class="exam-option-label">Nombre d'arrêts</div></div><input type="number" class="num-input" id="examN" value="10" min="3" max="37"></div>
+      <div class="exam-option-row"><div><div class="exam-option-label">Durée (minutes)</div></div><input type="number" class="num-input" id="examT" value="15" min="3" max="120"></div>
+      <div class="exam-option-row"><div><div class="exam-option-label">Mode</div></div><select class="num-input" id="examMode" style="width:auto;padding:8px 12px"><option value="full">Complet</option><option value="citation">Citation uniquement</option><option value="solution">Solution uniquement</option></select></div>
+      <div style="text-align:center;margin-top:20px"><button class="small-btn primary" style="padding:12px 28px;font-size:14px" onclick="startExam()">▶️ Lancer</button></div>
+    </div>
+  `;
+}
+function startExam(n, t, mode) {
+  if (n === undefined) { n = parseInt(document.getElementById('examN').value) || 10; t = parseInt(document.getElementById('examT').value) || 15; mode = document.getElementById('examMode').value; }
+  examState = { arr: shuffle(getArrets()).slice(0, n), idx: 0, mode: mode||'full', timeLeft: (t||15)*60, total: (t||15)*60, answers: [], startedAt: Date.now() };
+  go('exam'); renderExamQuestion();
+  examTimerInterval = setInterval(() => { examState.timeLeft--; updateExamTimer(); if (examState.timeLeft <= 0) finishExam(); }, 1000);
+}
+function updateExamTimer() {
+  const el = document.getElementById('examTimer'); if (!el || !examState) return;
+  const m = Math.floor(examState.timeLeft/60), s = examState.timeLeft % 60;
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'timer' + (examState.timeLeft < 60 ? ' danger' : examState.timeLeft < 180 ? ' warning' : '');
+}
+function renderExamQuestion() {
+  const e = examState;
+  if (e.idx >= e.arr.length) { finishExam(); return; }
+  const a = e.arr[e.idx];
+  const fields = e.mode === 'citation' ? ['cit'] : e.mode === 'solution' ? ['sol'] : ['prob','sol','port','cit'];
+  const labels = { prob:'Problème de droit', sol:'Solution', port:'Portée', cit:'Citation clé' };
+  document.getElementById('examArea').innerHTML = `
+    <div class="exam-header"><div><div class="exam-q-num">Question ${e.idx+1} / ${e.arr.length}</div><div style="font-size:12px;color:var(--text-3)">${a.nom} · ${a.jur} · ${a.date}</div></div><div id="examTimer" class="timer">--:--</div></div>
+    <div class="exam-question">
+      <div class="exam-label">Arrêt</div><div style="font-size:18px;font-weight:800;margin-bottom:16px">${a.nom}</div>
+      ${fields.map(f => `<div style="margin-bottom:14px"><div class="exam-label">${labels[f]}</div><textarea class="exam-input" data-field="${f}" placeholder="Ta réponse..."></textarea></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px"><button class="small-btn" onclick="skipExamQuestion()">⏭️ Passer</button><button class="small-btn primary" onclick="submitExamQuestion()">${e.idx === e.arr.length-1 ? 'Terminer' : 'Suivant →'}</button></div>
+    </div>`;
+  updateExamTimer();
+  setTimeout(() => document.querySelector('.exam-input')?.focus(), 100);
+}
+function submitExamQuestion() {
+  const e = examState, a = e.arr[e.idx], ans = {};
+  document.querySelectorAll('.exam-input').forEach(i => ans[i.dataset.field] = i.value);
+  ans.arr = a; e.answers.push(ans); e.idx++; renderExamQuestion();
+}
+function skipExamQuestion() { examState.answers.push({ arr: examState.arr[examState.idx], skipped:true }); examState.idx++; renderExamQuestion(); }
+function finishExam() {
+  if (examTimerInterval) clearInterval(examTimerInterval);
+  const e = examState, dur = Math.round((Date.now()-e.startedAt)/1000);
+  let totalScore = 0;
+  const details = e.answers.map((ans) => {
+    const a = ans.arr;
+    const fields = e.mode === 'citation' ? ['cit'] : e.mode === 'solution' ? ['sol'] : ['prob','sol','port','cit'];
+    let s = 0;
+    const breakdown = fields.map(f => {
+      const expected = f === 'prob' ? a.prob : f === 'sol' ? a.sol : f === 'port' ? a.port : a.cit;
+      const sc = matchScore(ans[f] || '', expected);
+      s += sc;
+      return {field:f, score:sc, expected};
+    });
+    const fieldScore = s / fields.length;
+    totalScore += fieldScore;
+    return { arr: a, breakdown, score: fieldScore, skipped: ans.skipped };
+  });
+  const finalScore = Math.round(totalScore / Math.max(1, e.answers.length) * 100);
+  state.stats.examsDone++;
+  if (finalScore > state.stats.bestExam) state.stats.bestExam = finalScore;
+  save(); addXp(Math.round(finalScore/5)); checkBadges();
+  document.getElementById('examArea').innerHTML = `
+    <div class="card exam-report-card">
+      <div class="exam-score">${finalScore}%</div><div class="exam-score-label">Score global · ${dur} secondes</div>
+      <div style="margin-top:24px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="small-btn primary" onclick="renderExamHome()">Nouvel examen</button><button class="small-btn" onclick="go('dashboard')">Dashboard</button></div>
+      <div style="margin-top:30px;text-align:left">
+        ${details.map((d,i) => `<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>${i+1}. ${d.arr.nom}</strong><span style="font-weight:800;color:${d.score>0.7?'var(--success)':d.score>0.4?'var(--warning)':'var(--danger)'}">${Math.round(d.score*100)}%</span></div>${d.skipped ? '<div style="color:var(--text-3);font-size:12px">Passé</div>' : d.breakdown.map(b => `<div style="font-size:12px;color:var(--text-2);margin-top:6px"><span style="color:${b.score>0.5?'var(--success)':'var(--danger)'}">●</span> <strong>${b.field}</strong> — attendu : <em>${b.expected.slice(0,80)}${b.expected.length>80?'...':''}</em></div>`).join('')}</div>`).join('')}
+      </div>
+    </div>`;
+}
+function matchScore(got, expected) {
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+  const g = norm(got), e = norm(expected);
+  if (!g) return 0;
+  if (g === e) return 1;
+  const eWords = e.split(' ').filter(w => w.length > 3);
+  if (!eWords.length) return g.includes(e) ? 1 : 0;
+  return Math.min(1, eWords.filter(w => g.includes(w)).length / eWords.length);
+}
+
+/* ============================================================
+   AUDIO
+   ============================================================ */
+let audioState = null;
+function renderAudioHome() {
+  document.getElementById('audioArea').innerHTML = `
+    <div class="card" style="max-width:600px;margin:0 auto;text-align:center;padding:32px 24px">
+      <div style="font-size:56px;margin-bottom:12px">🎧</div>
+      <h2 style="font-size:20px;margin-bottom:6px">Mode audio mains-libres</h2>
+      <p style="color:var(--text-2);font-size:13.5px;margin-bottom:20px">Écoute les fiches en boucle.</p>
+      <div style="display:grid;gap:10px;text-align:left;max-width:360px;margin:0 auto 20px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">Ordre</span><select id="audioOrder" class="num-input" style="width:auto;padding:6px 10px"><option value="chrono">Chronologique</option><option value="random">Aléatoire</option><option value="due">À réviser</option></select></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">Vitesse</span><select id="audioRate" class="num-input" style="width:auto;padding:6px 10px"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.2">1.2×</option><option value="1.5">1.5×</option></select></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">Pause</span><input type="number" id="audioPause" class="num-input" value="2" min="0" max="20"></div>
+      </div>
+      <button class="small-btn primary" style="padding:12px 28px;font-size:14px" onclick="startAudio()">▶️ Démarrer</button>
+    </div>`;
+}
+function startAudio() {
+  const order = document.getElementById('audioOrder')?.value || 'chrono';
+  const rate = parseFloat(document.getElementById('audioRate')?.value || 1);
+  const pause = parseFloat(document.getElementById('audioPause')?.value || 2);
+  let arr = getArrets().slice();
+  if (order === 'random') arr = shuffle(arr);
+  else if (order === 'chrono') arr.sort((a,b)=>a.an-b.an);
+  else if (order === 'due') arr = dueArrets();
+  audioState = { arr, idx:0, rate, pause, playing:true };
+  go('audio'); playAudioItem();
+}
+function playAudioItem() {
+  const s = audioState;
+  if (!s || s.idx >= s.arr.length) { renderAudioEnd(); return; }
+  const a = s.arr[s.idx];
+  renderAudioPlayer(a);
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const text = `${a.nom}. ${a.jur}, ${a.date}. Problème : ${a.prob}. Solution : ${a.sol}. Portée : ${a.port}. Citation : ${a.cit}.`;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'fr-FR'; u.rate = s.rate;
+  u.onend = () => { if (!audioState || !audioState.playing) return; setTimeout(() => { if (!audioState || !audioState.playing) return; audioState.idx++; playAudioItem(); }, audioState.pause * 1000); };
+  speechSynthesis.speak(u);
+}
+function renderAudioPlayer(a) {
+  document.getElementById('audioArea').innerHTML = `
+    <div class="card" style="max-width:600px;margin:0 auto;text-align:center;padding:32px 24px">
+      <div class="srs-progress" style="justify-content:center"><span>${audioState.idx+1} / ${audioState.arr.length}</span></div>
+      <div style="font-size:48px;margin:16px 0">${audioState.playing ? '🔊' : '⏸️'}</div>
+      <h2 style="font-size:22px;margin-bottom:4px;font-weight:800">${a.nom}</h2>
+      <p style="color:var(--text-3);font-size:13px;margin-bottom:16px">${a.jur} · ${a.date}</p>
+      <div class="citation" style="text-align:left;margin-bottom:20px">« ${a.cit} »</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="small-btn" onclick="prevAudio()">⏮️</button><button class="small-btn primary" onclick="toggleAudio()" style="padding:10px 24px">${audioState.playing?'⏸️ Pause':'▶️ Reprendre'}</button><button class="small-btn" onclick="nextAudio()">⏭️</button><button class="small-btn" onclick="stopAudio()">⏹️</button></div>
+    </div>`;
+}
+function toggleAudio() { if (!audioState) return; audioState.playing = !audioState.playing; if (!audioState.playing) speechSynthesis.pause(); else speechSynthesis.resume(); renderAudioPlayer(audioState.arr[audioState.idx]); }
+function nextAudio() { if (audioState) { audioState.idx++; playAudioItem(); } }
+function prevAudio() { if (audioState && audioState.idx > 0) { audioState.idx--; playAudioItem(); } }
+function stopAudio() { if (audioState) audioState.playing = false; speechSynthesis.cancel(); audioState = null; renderAudioHome(); }
+function renderAudioEnd() { document.getElementById('audioArea').innerHTML = `<div class="empty"><div class="empty-icon">🎉</div><h2 style="font-size:20px">Playlist terminée !</h2><button class="small-btn primary" style="margin-top:16px" onclick="renderAudioHome()">Nouvelle</button></div>`; }
+
+/* ============================================================
+   STATS
+   ============================================================ */
+function renderStats() {
+  drawLineChart('chartRevisions', getDailyArray('dailyActivity', 30), '#7c8fff');
+  drawDonut('chartLevels', getLevelDistribution());
+  drawBars('chartAccuracy', getDailyArray('dailyActivity', 14));
+  drawLineChart('chartTime', getDailyArray('dailyTime', 30), '#a78bfa');
+  const dist = getLevelDistribution();
+  const labels = ['Nouveau','Apprentissage','Jeune','Confirmé','Avancé','Maîtrisé','Expert'];
+  const colors = ['#6b7488','#7c8fff','#a78bfa','#22d3ee','#22c55e','#fbbf24','#f59e0b'];
+  document.getElementById('levelLegend').innerHTML = dist.map((v,i)=>`<div class="dl-item"><span><span class="dl-dot" style="background:${colors[i]}"></span>${labels[i]}</span><span>${v}</span></div>`).join('');
+}
+function getDailyArray(key, days) {
+  const arr = []; const today = new Date();
+  for (let i = days-1; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); arr.push(state.stats[key][dayKey(d)] || 0); }
+  return arr;
+}
+function getLevelDistribution() { const dist = [0,0,0,0,0,0,0]; getArrets().forEach(a => dist[Math.min(6, getProg(a.id).level)]++); return dist; }
+function drawLineChart(id, data, color) {
+  const c = document.getElementById(id); if (!c) return;
+  const dpr = window.devicePixelRatio || 1, rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr; c.height = rect.height * dpr;
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height, pad = 24, max = Math.max(...data, 1);
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) { const y = pad + (H - pad*2) * i/4; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W-pad, y); ctx.stroke(); }
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  const step = (W - pad*2) / (data.length-1);
+  data.forEach((v, i) => { const x = pad + i*step; const y = H - pad - (v/max)*(H-pad*2); if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); });
+  ctx.stroke();
+  ctx.lineTo(W-pad, H-pad); ctx.lineTo(pad, H-pad); ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad, 0, H-pad);
+  grad.addColorStop(0, color + '60'); grad.addColorStop(1, color + '00');
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.fillStyle = color;
+  data.forEach((v,i) => { if (v > 0) { const x = pad + i*step; const y = H - pad - (v/max)*(H-pad*2); ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill(); } });
+}
+function drawDonut(id, data) {
+  const c = document.getElementById(id); if (!c) return;
+  const dpr = window.devicePixelRatio || 1, rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr; c.height = rect.height * dpr;
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  ctx.clearRect(0,0,W,H);
+  const cx = W/2, cy = H/2, R = Math.min(W,H)/2 - 10, r = R * 0.6;
+  const colors = ['#6b7488','#7c8fff','#a78bfa','#22d3ee','#22c55e','#fbbf24','#f59e0b'];
+  const total = data.reduce((a,b)=>a+b,0) || 1;
+  let start = -Math.PI/2;
+  data.forEach((v,i) => { if (v === 0) return; const angle = (v/total) * Math.PI*2;
+    ctx.beginPath(); ctx.arc(cx, cy, R, start, start+angle); ctx.arc(cx, cy, r, start+angle, start, true); ctx.closePath();
+    ctx.fillStyle = colors[i]; ctx.fill(); start += angle; });
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+  ctx.font = 'bold 22px -apple-system, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(total, cx, cy-6);
+  ctx.font = '600 11px -apple-system, sans-serif';
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-3').trim();
+  ctx.fillText('arrêts', cx, cy+14);
+}
+function drawBars(id, data) {
+  const c = document.getElementById(id); if (!c) return;
+  const dpr = window.devicePixelRatio || 1, rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr; c.height = rect.height * dpr;
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height, pad = 24;
+  ctx.clearRect(0,0,W,H);
+  const max = Math.max(...data, 1);
+  const bw = (W - pad*2) / data.length * 0.7, gap = (W - pad*2) / data.length * 0.3;
+  data.forEach((v,i) => { const x = pad + i*(bw+gap); const h = (v/max) * (H - pad*2);
+    ctx.fillStyle = v > 0 ? '#22c55e' : getComputedStyle(document.documentElement).getPropertyValue('--bg-3').trim();
+    ctx.beginPath(); ctx.roundRect(x, H-pad-h, bw, h, 3); ctx.fill(); });
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', state.settings.theme);
+  document.getElementById('themeBtn').textContent = state.settings.theme === 'dark' ? '🌙' : '☀️';
+  document.getElementById('tTheme').classList.toggle('on', state.settings.theme === 'dark');
+}
+document.getElementById('themeBtn').addEventListener('click', () => { state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark'; save(); applyTheme(); if (document.getElementById('stats').classList.contains('active')) renderStats(); });
+document.getElementById('tTheme').addEventListener('click', () => { state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark'; save(); applyTheme(); });
+document.getElementById('tNormal').addEventListener('click', function() { state.settings.includeNormal = !state.settings.includeNormal; this.classList.toggle('on', state.settings.includeNormal); save(); updateDashboard(); renderFiches(); });
+document.getElementById('tGoal').addEventListener('change', function() { state.settings.dailyGoal = parseInt(this.value) || 30; save(); });
+function resetAll() {
+  if (!confirm('Effacer TOUTE la progression ?')) return;
+  state = JSON.parse(JSON.stringify(defaultState));
+  save(); applyTheme(); updateHeader(); updateDashboard();
+  toast('Progression réinitialisée', 'success');
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `droit-admin-${dayKey(new Date())}.json`; a.click();
+  URL.revokeObjectURL(url); toast('Exporté ✓', 'success');
+}
+document.getElementById('importFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try { const p = JSON.parse(ev.target.result);
+      state = { ...defaultState, ...p };
+      state.settings = { ...defaultState.settings, ...(p.settings||{}) };
+      state.stats = { ...defaultState.stats, ...(p.stats||{}) };
+      save(); applyTheme(); updateHeader(); updateDashboard(); toast('Importé ✓', 'success');
+    } catch(err) { toast('Fichier invalide', 'danger'); }
+  };
+  r.readAsText(f);
+});
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function shuffle(arr) { const a = [...arr]; for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) { this.beginPath(); this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r); this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r); this.closePath(); return this; };
+}
+
+/* ============================================================
+   KEYBOARD
+   ============================================================ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (document.getElementById('srs').classList.contains('active')) {
+    if (e.key === ' ') { e.preventDefault(); flipSrs(); }
+    if (srsFlipped && ['1','2','3','4'].includes(e.key)) rateSrs(parseInt(e.key)-1);
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  loadState();
+  applyTheme();
+  updateHeader();
+  updateDashboard();
+  renderHeatmap();
+  renderBadges();
+  renderThemeProgress();
+  updateNavBadge();
+  renderFiches();
+  renderCours();
+  setInterval(() => { updateNavBadge(); }, 30000);
+  window.addEventListener('resize', () => { if (document.getElementById('stats').classList.contains('active')) renderStats(); });
+  const isNew = !localStorage.getItem(STORAGE_KEY);
+  if (isNew) setTimeout(() => toast('👋 Bienvenue ! Lance une session SRS.', 'xp'), 600);
+  save();
+}
+init();
+</script>
+</body>
+</html>
